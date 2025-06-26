@@ -78,7 +78,7 @@ function Profile({ setLoading }: ProfileProps) {
           <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-md aspect-video">
               <iframe
-                src="https://www.youtube.com/embed/kvUIbMk-Ojg"
+                src="https://www.youtube.com/embed/XRNIGXZH1f0?si=FJvDxsP6B6JUIMz"
                 title="Profil STTP"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

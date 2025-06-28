@@ -75,7 +75,6 @@ function Flow({ setLoading }: FlowProps) {
           ))}
         </div>
 
-        {/* DESKTOP */}
         {steps.length >= 5 && (
           <div className="hidden md:block relative">
             <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-yellow-400 z-0"></div>

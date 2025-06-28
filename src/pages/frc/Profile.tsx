@@ -44,7 +44,7 @@ function Profile({ setLoading }: ProfileProps) {
   }, [setLoading]);
 
   return (
-    <section id="profil" className="bg-gray-900 py-12 md:py-20 px-4 md:px-20">
+    <section id="profile" className="bg-gray-900 py-12 md:py-20 px-4 md:px-20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold mb-4">Profil</h2>

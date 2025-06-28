@@ -58,11 +58,13 @@ function Navbar() {
           </div>
 
           <div className="hidden lg:flex items-center space-x-6">
-            {menu.map((item) =>
+            {menu.map((item, index) =>
               item.label !== "Akademik" ? (
                 <button
                   key={item.id}
-                  onClick={() => scrollToSection(item.Path.replace("#", ""))}
+                  onClick={() =>
+                    scrollToSection(index === 0 ? "profile" : item.Path.replace("#", ""))
+                  }
                   className="text-white hover:text-yellow-300 transition-colors duration-300"
                 >
                   {item.label}
@@ -178,7 +180,9 @@ function Navbar() {
               item.label !== "Akademik" ? (
                 <button
                   key={item.id}
-                  onClick={() => scrollToSection(item.Path.replace("#", ""))}
+                  onClick={() =>
+                    scrollToSection(index === 0 ? "profile" : item.Path.replace("#", ""))
+                  }
                   className={`block text-white hover:text-yellow-300 transition-all duration-300 transform ${
                     isOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
                   } w-full text-left`}

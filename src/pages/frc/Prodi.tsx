@@ -1,6 +1,8 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
+import { motion, AnimatePresence, useInView } from "framer-motion"
+import { easeOut } from "framer-motion"
 import { api } from "../../config/hooks"
 
 interface ProdiProps {
@@ -27,19 +29,11 @@ interface ProdiData {
 function Prodi({ setLoading }: ProdiProps) {
   const axios = api()
   const [prodis, setProdis] = useState<ProdiData[]>([])
-  const [selectedTitle, setSelectedTitle] = useState<string | null>(null)
-  const [selectedFoto, setSelectedFoto] = useState<string | null>(null)
-  const [content, setContent] = useState<string | null>(null)
-  const [peluang, setPeluang] = useState<string | null>(null)
+  const [selectedProdi, setSelectedProdi] = useState<ProdiData | null>(null)
   const [showPopup, setShowPopup] = useState(false)
-  const [isClosing, setIsClosing] = useState(false)
-
-  const [showImage, setShowImage] = useState(false)
-  const [showTitle, setShowTitle] = useState(false)
-  const [showContent, setShowContent] = useState(false)
-  const [showPeluang, setShowPeluang] = useState(false)
-
   const scrollPositionRef = useRef<number>(0)
+  const sectionRef = useRef(null)
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" })
 
   useEffect(() => {
     setLoading(true)
@@ -62,231 +56,229 @@ function Prodi({ setLoading }: ProdiProps) {
       .finally(() => setLoading(false))
   }, [])
 
-  const handleCardClick = (prodiName: string) => {
-    const prodiData = prodis.find((p) => p.Name === prodiName)
-    if (!prodiData) return
-
-    scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop
-
-    setShowImage(false)
-    setShowTitle(false)
-    setShowContent(false)
-    setShowPeluang(false)
-
-    setSelectedTitle(prodiData.Name)
+  const handleCardClick = (prodi: ProdiData) => {
+    scrollPositionRef.current = window.pageYOffset
+    setSelectedProdi(prodi)
     setShowPopup(true)
-    setIsClosing(false)
-
-    const fotoURL = prodiData.Foto
-      ? `http://localhost:1337${
-          prodiData.Foto.formats?.medium?.url ||
-          prodiData.Foto.formats?.small?.url ||
-          prodiData.Foto.formats?.thumbnail?.url ||
-          ""
-        }`
-      : null
-    setSelectedFoto(fotoURL)
-
-    setContent(prodiData.deskripsi_prodi?.Content || "Deskripsi tidak ditemukan.")
-    setPeluang(prodiData.deskripsi_prodi?.peluang || null)
-
-    setTimeout(() => setShowImage(true), 200)
-    setTimeout(() => setShowTitle(true), 600)
-    setTimeout(() => setShowContent(true), 1000)
-    setTimeout(() => setShowPeluang(true), 1300)
+    document.body.style.overflow = "hidden"
   }
 
   const closePopup = () => {
-    setIsClosing(true)
-    setShowImage(false)
-    setShowTitle(false)
-    setShowContent(false)
-    setShowPeluang(false)
-
-    setTimeout(() => {
-      setShowPopup(false)
-      setIsClosing(false)
-      setSelectedTitle(null)
-      setSelectedFoto(null)
-      setContent(null)
-      setPeluang(null)
-    }, 300)
+    setShowPopup(false)
+    setSelectedProdi(null)
+    document.body.style.overflow = ""
+    setTimeout(() => window.scrollTo(0, scrollPositionRef.current), 100)
   }
 
-  useEffect(() => {
-    if (showPopup) {
-      const currentScrollY = window.pageYOffset
-      scrollPositionRef.current = currentScrollY
-      document.body.style.position = "fixed"
-      document.body.style.top = `-${currentScrollY}px`
-      document.body.style.width = "100%"
-      document.body.style.overflow = "hidden"
-    } else {
-      const scrollY = scrollPositionRef.current
-      document.body.style.position = ""
-      document.body.style.top = ""
-      document.body.style.width = ""
-      document.body.style.overflow = ""
-      requestAnimationFrame(() => {
-        window.scrollTo(0, scrollY)
-      })
-    }
+  const getImageUrl = (foto: any) => {
+    if (!foto?.formats) return "/placeholder.svg"
+    return `http://localhost:1337${
+      foto.formats.medium?.url || foto.formats.small?.url || foto.formats.thumbnail?.url || ""
+    }`
+  }
 
-    return () => {
-      document.body.style.position = ""
-      document.body.style.top = ""
-      document.body.style.width = ""
-      document.body.style.overflow = ""
-    }
-  }, [showPopup])
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  }
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && "scrollRestoration" in window.history) {
-      window.history.scrollRestoration = "manual"
-    }
-  }, [])
+  const cardVariants = {
+    hidden: {
+      opacity: 0,
+      y: 50,
+      scale: 0.9,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: easeOut,
+      },
+    },
+  }
+  const modalVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.8,
+      y: 50,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        duration: 0.4,
+        ease: easeOut,
+      },
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.8,
+      y: 50,
+      transition: {
+        duration: 0.3,
+      },
+    },
+  }
+
+  const contentVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.2,
+        duration: 0.5,
+      },
+    }),
+  }
 
   return (
     <>
-      <section id="program-studi" className="bg-[#000] py-12 md:py-20 px-4 md:px-20">
+      <section ref={sectionRef} id="program-studi" className="bg-black py-12 md:py-20 px-4 md:px-20">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 md:mb-16">
+          <motion.div
+            className="text-center mb-12 md:mb-16"
+            initial={{ opacity: 0, y: -30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -30 }}
+            transition={{ duration: 0.6 }}
+          >
             <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold mb-4">Program Studi</h2>
-            <div className="w-24 h-1 bg-yellow-400 mx-auto rounded-full"></div>
-          </div>
+            <div className="w-24 h-1 bg-yellow-400 mx-auto rounded-full" />
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {prodis.map((prodi) => (
-              <div
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+          >
+            {prodis.map((prodi, index) => (
+              <motion.div
                 key={prodi.id}
-                className="rounded-lg overflow-hidden shadow-lg bg-gray-900 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/20"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  handleCardClick(prodi.Name)
+                variants={cardVariants}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 20px 40px rgba(251, 191, 36, 0.2)",
                 }}
+                whileTap={{ scale: 0.98 }}
+                className="rounded-lg overflow-hidden shadow-lg bg-gray-900 cursor-pointer"
+                onClick={() => handleCardClick(prodi)}
               >
                 <div className="h-48 md:h-64 overflow-hidden">
-                  <img
-                    src={`http://localhost:1337${
-                      prodi.Foto?.formats?.medium?.url ||
-                      prodi.Foto?.formats?.small?.url ||
-                      prodi.Foto?.formats?.thumbnail?.url ||
-                      ""
-                    }`}
+                  <motion.img
+                    src={getImageUrl(prodi.Foto)}
                     alt={prodi.Name}
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ duration: 0.3 }}
                   />
                 </div>
                 <div className="p-4 md:p-6 text-center">
-                  <h3 className="text-white font-bold text-base md:text-lg mb-2 transition-colors duration-300 hover:text-yellow-400">
+                  <h3 className="text-white font-bold text-base md:text-lg mb-2 hover:text-yellow-400 transition-colors">
                     {prodi.Jenjang} - {prodi.Name}
                   </h3>
                   <p className="text-gray-300 text-sm line-clamp-3">{prodi.deskripsi_prodi?.Content}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {showPopup && (
-        <div
-          className={`fixed inset-0 bg-black flex items-center justify-center z-[9999] px-4 transition-all duration-500 ${
-            isClosing ? "bg-opacity-0" : "bg-opacity-70"
-          }`}
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            closePopup()
-          }}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-          }}
-        >
-          <div
-            className={`bg-[#003E7E] text-white rounded-lg shadow-xl max-w-3xl w-full p-6 md:p-8 md:px-10 relative max-h-[90vh] overflow-y-auto transform transition-all duration-500 ${
-              isClosing ? "scale-90 opacity-0 translate-y-8" : "scale-100 opacity-100 translate-y-0"
-            }`}
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-            }}
+      <AnimatePresence>
+        {showPopup && selectedProdi && (
+          <motion.div
+            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[9999] px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closePopup}
           >
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                closePopup()
-              }}
-              className="absolute top-4 right-6 text-white text-2xl font-bold hover:text-yellow-400 transition-all duration-200 hover:rotate-180 transform z-10"
-              aria-label="Close popup"
+            <motion.div
+              className="bg-[#003E7E] text-white rounded-lg shadow-xl max-w-3xl w-full p-6 md:p-8 relative max-h-[90vh] overflow-y-auto"
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
             >
-              &times;
-            </button>
+              <button
+                onClick={closePopup}
+                className="absolute top-4 right-6 text-white text-2xl font-bold hover:text-yellow-400 transition-all hover:rotate-180 transform z-10"
+              >
+                ×
+              </button>
 
-            {selectedFoto && (
-              <div
-                className={`mb-6 overflow-hidden rounded-md transition-all duration-700 transform ${
-                  showImage ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-4"
-                }`}
+              <motion.div
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                custom={0}
+                className="mb-6 overflow-hidden rounded-md"
               >
                 <img
-                  src={selectedFoto || "/placeholder.svg"}
+                  src={getImageUrl(selectedProdi.Foto) || "/placeholder.svg"}
                   alt="Foto Prodi"
                   className="w-full aspect-video object-contain rounded-md"
                 />
-              </div>
-            )}
+              </motion.div>
 
-            <div
-              className={`transition-all duration-600 transform ${
-                showTitle ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-              }`}
-            >
-              <h3 className="text-xl md:text-2xl font-bold mb-6 text-yellow-400">{selectedTitle}</h3>
-            </div>
-
-            <div
-              className={`transition-all duration-700 transform ${
-                showContent
-                  ? "opacity-100 translate-y-0 max-h-screen"
-                  : "opacity-0 translate-y-6 max-h-0 overflow-hidden"
-              }`}
-            >
-              <div className="space-y-6">
-                <div className="bg-white/5 p-4 rounded-lg border-l-4 border-yellow-400">
-                  <p className="whitespace-pre-line text-base leading-relaxed text-gray-100">{content}</p>
-                </div>
-              </div>
-            </div>
-
-            {peluang && (
-              <div
-                className={`transition-all duration-700 transform ${
-                  showPeluang
-                    ? "opacity-100 translate-y-0 max-h-screen mt-6"
-                    : "opacity-0 translate-y-6 max-h-0 overflow-hidden mt-0"
-                }`}
+              <motion.h3
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                custom={1}
+                className="text-xl md:text-2xl font-bold mb-6 text-yellow-400"
               >
-                <div className="border-t border-gray-600 pt-6">
+                {selectedProdi.Name}
+              </motion.h3>
+
+              <motion.div
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                custom={2}
+                className="space-y-6"
+              >
+                <div className="bg-white/5 p-4 rounded-lg border-l-4 border-yellow-400">
+                  <p className="whitespace-pre-line text-base leading-relaxed text-gray-100">
+                    {selectedProdi.deskripsi_prodi?.Content}
+                  </p>
+                </div>
+              </motion.div>
+
+              {selectedProdi.deskripsi_prodi?.peluang && (
+                <motion.div
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate="visible"
+                  custom={3}
+                  className="border-t border-gray-600 pt-6 mt-6"
+                >
                   <h4 className="font-semibold text-lg mb-3 text-yellow-400 flex items-center">
-                    <span className="w-3 h-3 bg-yellow-400 rounded-full mr-3 animate-pulse"></span>
+                    <span className="w-3 h-3 bg-yellow-400 rounded-full mr-3 animate-pulse" />
                     Peluang Karier:
                   </h4>
                   <div className="bg-yellow-400/10 p-4 rounded-lg border border-yellow-400/20">
-                    <p className="whitespace-pre-line text-sm leading-relaxed text-gray-200">{peluang}</p>
+                    <p className="whitespace-pre-line text-sm leading-relaxed text-gray-200">
+                      {selectedProdi.deskripsi_prodi.peluang}
+                    </p>
                   </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+                </motion.div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <style>{`
         .line-clamp-3 {
@@ -295,7 +287,6 @@ function Prodi({ setLoading }: ProdiProps) {
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
-
         .overflow-y-auto::-webkit-scrollbar {
           width: 6px;
         }
@@ -306,14 +297,6 @@ function Prodi({ setLoading }: ProdiProps) {
         .overflow-y-auto::-webkit-scrollbar-thumb {
           background: #fbbf24;
           border-radius: 3px;
-        }
-        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-          background: #f59e0b;
-        }
-
-        /* Prevent layout shift */
-        body.modal-open {
-          overflow: hidden !important;
         }
       `}</style>
     </>

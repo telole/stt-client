@@ -71,6 +71,16 @@ function Footer({ setLoading }: FooterProps) {
       </div>
     </div>
   </footer>
+
+      <a
+        href="https://wa.me/6281234567890"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 bg-[#013D7B] text-white px-4 py-2 rounded-full flex items-center shadow-lg z-50 hover:bg-[#0252a0] transition-all space-x-2"
+      >
+        <i className="bi bi-whatsapp text-4xl text-yellow-400"></i>
+        <span className="text-sm sm:text-base font-medium">Hubungi via WhatsApp</span>
+      </a>
         </>
     )
 

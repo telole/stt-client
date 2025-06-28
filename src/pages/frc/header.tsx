@@ -70,40 +70,37 @@ function Header({ setLoading }: HeaderProps) {
   if (error) return <div className="text-red-500 text-center mt-10">Error: {error}</div>;
   if (!hero) return null;
 
-  return (
-    <div className="relative w-full h-[90vh] md:h-screen overflow-hidden">
-      {/* Background Slideshow */}
-      {hero.Background.map((img, idx) => (
-        <img
-          key={img.id}
-          src={img.url}
-          alt={img.name}
-          className={`absolute w-full h-full object-cover transition-opacity duration-1000 brightness-50 ${
-            currentIndex === idx ? "opacity-100" : "opacity-0"
-          }`}
-        />
-      ))}
-
-      {/* Hero Text Content */}
-      <div className="absolute inset-0 flex flex-col items-start justify-center px-4 sm:px-10 md:px-20 text-white z-10">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 leading-tight max-w-3xl animate__animated animate__fadeInUp  ">
-          {hero.Headline}
-        </h1>
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight max-w-3xl animate__animated animate__fadeInUp animate-delay-1s">
-          {hero.Headline2}
-        </h2>
-        <p className="text-sm sm:text-base md:text-lg mb-6 max-w-2xl leading-relaxed animate__animated animate__fadeInUp animate_delay-1s ">
-          {hero.Subheadline}
-        </p>
-        <a
-          href="#daftar"
-          className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 sm:py-2.5 md:py-3 px-4 sm:px-5 md:px-6 rounded transition-all text-sm sm:text-base md:text-lg animate__animated animate__zoomIn animate__delay-1s"
-        >
-          Daftar Sekarang
-        </a>
-      </div>
+return (
+  <div className="relative w-full h-screen overflow-hidden">
+    {hero.Background.map((img, idx) => (
+      <img
+        key={img.id}
+        src={img.url}
+        alt={img.name}
+        className={`absolute w-full h-full object-cover transition-opacity duration-1000 brightness-50 ${
+          currentIndex === idx ? "opacity-100" : "opacity-0"
+        }`}
+      />
+    ))}
+    <div className="absolute inset-0 flex flex-col items-start justify-center px-4 sm:px-10 md:px-20 text-white z-10">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 leading-tight max-w-3xl animate__animated animate__fadeInUp">
+        {hero.Headline}
+      </h1>
+      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight max-w-3xl animate__animated animate__fadeInUp animate-delay-1s">
+        {hero.Headline2}
+      </h2>
+      <p className="text-sm sm:text-base md:text-lg mb-6 max-w-2xl leading-relaxed animate__animated animate__fadeInUp animate_delay-1s">
+        {hero.Subheadline}
+      </p>
+      <a
+        href="#daftar"
+        className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 sm:py-2.5 md:py-3 px-4 sm:px-5 md:px-6 rounded transition-all text-sm sm:text-base md:text-lg animate__animated animate__zoomIn animate__delay-1s"
+      >
+        Daftar Sekarang
+      </a>
     </div>
-  );
+  </div>
+);
 }
 
 export default Header;

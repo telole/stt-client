@@ -16,6 +16,7 @@
     "axios": "^1.9.0",
     "bootstrap-icons": "^1.13.1",
     "css": "^3.0.0",
+    "framer-motion": "^12.19.2",
     "lucide-react": "^0.523.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

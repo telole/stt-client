@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 interface Step {
   id: number;
@@ -41,10 +42,16 @@ function Flow({ setLoading }: FlowProps) {
         </h2>
         <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8 md:mb-16 rounded-full"></div>
 
-        {/* MOBILE VIEW */}
         <div className="block md:hidden space-y-8">
           {steps.map((step) => (
-            <div className="flex items-start gap-4" key={step.id}>
+            <motion.div
+              className="flex items-start gap-4"
+              key={step.id}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center font-bold text-blue-900 text-lg flex-shrink-0">
                 {step.Urutan}
               </div>
@@ -64,16 +71,22 @@ function Flow({ setLoading }: FlowProps) {
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        {/* DESKTOP VIEW */}
+        {/* DESKTOP */}
         {steps.length >= 5 && (
           <div className="hidden md:block relative">
             <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-yellow-400 z-0"></div>
 
-            <div className="flex items-start mb-16 relative z-10">
+            <motion.div
+              className="flex items-start mb-16 relative z-10"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="w-1/2 pr-12 relative">
                 <div className="absolute right-0 top-4 w-10 h-1 bg-yellow-400"></div>
                 <h3 className="text-blue-900 font-bold text-lg mb-2">{steps[0].Title}</h3>
@@ -86,9 +99,15 @@ function Flow({ setLoading }: FlowProps) {
                 {steps[0].Urutan}
               </div>
               <div className="w-1/2 pl-12"></div>
-            </div>
+            </motion.div>
 
-            <div className="flex items-start mb-16 relative z-10">
+            <motion.div
+              className="flex items-start mb-16 relative z-10"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="w-1/2 pr-12"></div>
               <div className="relative z-10 w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center font-bold text-blue-900 text-xl">
                 {steps[1].Urutan}
@@ -98,9 +117,15 @@ function Flow({ setLoading }: FlowProps) {
                 <h3 className="text-blue-900 font-bold text-lg mb-2">{steps[1].Title}</h3>
                 <p className="text-sm text-gray-700 leading-relaxed">{steps[1].Deskripsi}</p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="flex items-start mb-16 relative z-10">
+            <motion.div
+              className="flex items-start mb-16 relative z-10"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="w-1/2 pr-12 relative">
                 <div className="absolute right-0 top-4 w-10 h-1 bg-yellow-400"></div>
                 <h3 className="text-blue-900 font-bold text-lg mb-2">{steps[2].Title}</h3>
@@ -110,9 +135,15 @@ function Flow({ setLoading }: FlowProps) {
                 {steps[2].Urutan}
               </div>
               <div className="w-1/2 pl-12"></div>
-            </div>
+            </motion.div>
 
-            <div className="flex items-start mb-16 relative z-10">
+            <motion.div
+              className="flex items-start mb-16 relative z-10"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="w-1/2 pr-12"></div>
               <div className="relative z-10 w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center font-bold text-blue-900 text-xl">
                 {steps[3].Urutan}
@@ -122,9 +153,15 @@ function Flow({ setLoading }: FlowProps) {
                 <h3 className="text-blue-900 font-bold text-lg mb-2">{steps[3].Title}</h3>
                 <p className="text-sm text-gray-700 leading-relaxed">{steps[3].Deskripsi}</p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="flex items-center relative z-10">
+            <motion.div
+              className="flex items-center relative z-10"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <div className="w-1/2 pr-12 flex justify-end relative">
                 <div className="absolute right-0 top-16 w-10 h-1 bg-yellow-400"></div>
                 <div className="bg-blue-900 text-white px-6 py-4 rounded-lg max-w-xs">
@@ -137,7 +174,7 @@ function Flow({ setLoading }: FlowProps) {
                 {steps[4].Urutan}
               </div>
               <div className="w-1/2 pl-12"></div>
-            </div>
+            </motion.div>
           </div>
         )}
       </div>

@@ -235,7 +235,6 @@ function Testimoni({ setLoading }: TestimoniProps) {
         `}
       </style>
 
-      {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
@@ -247,7 +246,6 @@ function Testimoni({ setLoading }: TestimoniProps) {
           <div className="w-24 h-1 bg-yellow-400 mx-auto rounded-full"></div>
         </div>
 
-        {/* MOBILE RESPONSIVE (Stacked) */}
         <div className="flex flex-col lg:hidden gap-8">
           {testimoni.length === 0
             ? Array.from({ length: 3 }).map((_, i) => (
@@ -291,10 +289,7 @@ function Testimoni({ setLoading }: TestimoniProps) {
                 </div>
               ))}
         </div>
-
-        {/* DESKTOP VIEW */}
         <div className="hidden lg:flex flex-row items-center justify-between gap-12">
-          {/* Left: Cards */}
           <div className={`w-1/2 space-y-12 ${isVisible ? "animate-slide-in-left" : "opacity-0"}`}>
             {testimoni.length === 0
               ? Array.from({ length: 3 }).map((_, i) => (
@@ -341,7 +336,6 @@ function Testimoni({ setLoading }: TestimoniProps) {
                       <p className="text-sm text-gray-600">{item.Jabatan}</p>
                     </div>
 
-                    {/* Enhanced Beautiful Line Animations */}
                     {activeIndex === i && (
                       <div className="absolute left-full top-1/2 transform -translate-y-1/2 z-10">
                         <svg
@@ -353,14 +347,12 @@ function Testimoni({ setLoading }: TestimoniProps) {
                           className="overflow-visible"
                         >
                           <defs>
-                            {/* Gradient definitions */}
                             <linearGradient id={`gradient-${i}`} x1="0%" y1="0%" x2="100%" y2="0%">
                               <stop offset="0%" stopColor="#FCD34D" stopOpacity="0.8" />
                               <stop offset="50%" stopColor="#F59E0B" stopOpacity="1" />
                               <stop offset="100%" stopColor="#FCD34D" stopOpacity="0.6" />
                             </linearGradient>
 
-                            {/* Glow filter */}
                             <filter id={`glow-${i}`} x="-50%" y="-50%" width="200%" height="200%">
                               <feGaussianBlur stdDeviation="4" result="coloredBlur" />
                               <feMerge>
@@ -369,13 +361,11 @@ function Testimoni({ setLoading }: TestimoniProps) {
                               </feMerge>
                             </filter>
 
-                            {/* Drop shadow */}
                             <filter id={`shadow-${i}`}>
                               <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#FCD34D" floodOpacity="0.3" />
                             </filter>
                           </defs>
 
-                          {/* Background glow path */}
                           {i === 0 && (
                             <>
                               <path
@@ -442,7 +432,6 @@ function Testimoni({ setLoading }: TestimoniProps) {
                             </>
                           )}
 
-                          {/* Animated particles along the path */}
                           <g>
                             {[...Array(4)].map((_, particleIndex) => (
                               <circle
@@ -466,7 +455,6 @@ function Testimoni({ setLoading }: TestimoniProps) {
                             ))}
                           </g>
 
-                          {/* Hidden paths for particle animation */}
                           <defs>
                             <path id="path-0" d="M0 70 Q80 70 160 70 Q240 70 280 70 Q300 70 300 90 Q300 110 300 120" />
                             <path id="path-1" d="M0 70 Q80 65 160 70 Q200 75 240 70 Q270 65 290 70" />
@@ -479,7 +467,6 @@ function Testimoni({ setLoading }: TestimoniProps) {
                 ))}
           </div>
 
-          {/* Right: Enhanced Speech Bubble */}
           <div className={`w-1/2 ${isVisible ? "animate-slide-in-right" : "opacity-0"}`}>
             {testimoni.length === 0 ? (
               <div className="bg-white rounded-2xl p-8 shadow-lg relative">

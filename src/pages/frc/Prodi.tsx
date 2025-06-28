@@ -39,7 +39,6 @@ function Prodi({ setLoading }: ProdiProps) {
   const [showContent, setShowContent] = useState(false)
   const [showPeluang, setShowPeluang] = useState(false)
 
-  // Ref untuk menyimpan posisi scroll
   const scrollPositionRef = useRef<number>(0)
 
   useEffect(() => {
@@ -149,7 +148,7 @@ function Prodi({ setLoading }: ProdiProps) {
 
   return (
     <>
-      <section className="bg-[#000] py-12 md:py-20 px-4 md:px-20">
+      <section id="program-studi" className="bg-[#000] py-12 md:py-20 px-4 md:px-20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold mb-4">Program Studi</h2>
@@ -191,7 +190,6 @@ function Prodi({ setLoading }: ProdiProps) {
         </div>
       </section>
 
-      {/* Modal Popup - Rendered inline tanpa portal */}
       {showPopup && (
         <div
           className={`fixed inset-0 bg-black flex items-center justify-center z-[9999] px-4 transition-all duration-500 ${

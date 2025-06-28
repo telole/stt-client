@@ -47,6 +47,10 @@ return (
             font-style: normal;
           }
 
+          html {
+            scroll-behavior: smooth;
+          }
+
           @font-face {
             font-family: 'Poppins';
             src: url('/poppins/Poppins-Bold.ttf') format('truetype');

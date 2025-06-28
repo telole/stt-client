@@ -9,7 +9,7 @@ interface ProgramData {
   id: number;
   Name: string;
   Description: string;
-  Icon: string | null; // misal "bi-house-fill"
+  Icon: string | null; 
 }
 
 function Program({ setLoading }: ProgramProps) {

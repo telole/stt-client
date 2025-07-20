@@ -43,6 +43,24 @@ function Profile({ setLoading }: ProfileProps) {
     fetchProfile();
   }, [setLoading]);
 
+  const convertToEmbedUrl = (url: string | undefined) => {
+    if (!url) return '';
+  
+    if (url.includes('youtu.be/')) {
+      const videoId = url.split('youtu.be/')[1].split('?')[0];
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+    
+    if (url.includes('youtube.com/watch?v=')) {
+      const videoId = url.split('v=')[1].split('&')[0];
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+    
+    return url;
+  };
+
+  const embedUrl = convertToEmbedUrl(profile?.url);
+
   return (
     <section id="profile" className="bg-gray-900 py-12 md:py-20 px-4 md:px-20">
       <div className="max-w-6xl mx-auto">
@@ -68,7 +86,9 @@ function Profile({ setLoading }: ProfileProps) {
                     <span className="text-yellow-400 font-bold text-sm md:text-base mt-1 flex-shrink-0">
                       {index + 1}.
                     </span>
-                    <p className="text-white text-sm md:text-base leading-relaxed">{misi.Text.replace(/^\d+\.\s*/, "")}</p>
+                    <p className="text-white text-sm md:text-base leading-relaxed">
+                      {misi.Text.replace(/^\d+\.\s*/, "")}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -77,13 +97,19 @@ function Profile({ setLoading }: ProfileProps) {
 
           <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-md aspect-video">
-              <iframe
-                src="https://www.youtube.com/embed/XRNIGXZH1f0?si=FJvDxsP6B6JUIMz"
-                title="Profil STTP"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full rounded-lg shadow-lg"
-              ></iframe>
+              {embedUrl ? (
+                <iframe
+                  src={embedUrl}
+                  title="Profil STTP"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full rounded-lg shadow-lg"
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-800 rounded-lg flex items-center justify-center text-white">
+                  Video tidak tersedia
+                </div>
+              )}
             </div>
           </div>
         </div>

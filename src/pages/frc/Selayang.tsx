@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../../config/hooks";
+import { api, getImageBaseURL } from "../../config/hooks";
 import { motion } from "framer-motion";
 
 interface SelayangData {
@@ -44,9 +44,10 @@ function Selayang({ setLoading }: SelayangProps) {
 
   if (!selayang) return null;
 
+  const imageBaseURL = getImageBaseURL();
   const imageUrl =
     selayang.Foto?.formats?.medium?.url
-      ? `http://localhost:1337${selayang.Foto.formats.medium.url}`
+      ? `${imageBaseURL}${selayang.Foto.formats.medium.url}`
       : "";
 
   return (

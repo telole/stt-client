@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { api, getImageBaseURL } from "../../config/hooks";
 
 
 interface BackgroundImage {
@@ -22,23 +23,23 @@ function Header({ setLoading }: HeaderProps) {
   const [hero, setHero] = useState<HeroData | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const axios = api();
 
   useEffect(() => {
-    fetch("http://localhost:1337/api/hero?populate=Background")
+    setLoading(true);
+    axios
+      .get("hero?populate=Background")
       .then((res) => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
-      .then((json) => {
-        const data = json.data;
+        const data = res.data.data;
         if (!data || !data.Headline || !data.Background) {
           throw new Error("Invalid data structure received from API");
         }
 
+        const imageBaseURL = getImageBaseURL();
         const fullImages: BackgroundImage[] = data.Background.map((img: any) => ({
           id: img.id,
           name: img.name,
-          url: `http://localhost:1337${img.url}`,
+          url: `${imageBaseURL}${img.url}`,
         }));
 
         setHero({
@@ -55,7 +56,7 @@ function Header({ setLoading }: HeaderProps) {
         setError(err.message);
         setLoading(false);
       });
-  }, [setLoading]);
+  }, []);
 
   useEffect(() => {
     if (!hero) return;

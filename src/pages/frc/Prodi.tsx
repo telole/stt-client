@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import { motion, AnimatePresence, useInView } from "framer-motion"
 import { easeOut } from "framer-motion"
-import { api } from "../../config/hooks"
+import { api, getImageBaseURL } from "../../config/hooks"
 
 interface ProdiProps {
   setLoading: (value: boolean) => void
@@ -27,7 +27,7 @@ interface ProdiData {
 }
 
 function Prodi({ setLoading }: ProdiProps) {
-  const axios = api()
+  const axiosInstance = api()
   const [prodis, setProdis] = useState<ProdiData[]>([])
   const [selectedProdi, setSelectedProdi] = useState<ProdiData | null>(null)
   const [showPopup, setShowPopup] = useState(false)
@@ -37,7 +37,7 @@ function Prodi({ setLoading }: ProdiProps) {
 
   useEffect(() => {
     setLoading(true)
-    axios
+    axiosInstance
       .get("prodis?populate=*")
       .then((res) => {
         const prodiList = (res.data?.data || []).map((item: any) => ({
@@ -72,7 +72,8 @@ function Prodi({ setLoading }: ProdiProps) {
 
   const getImageUrl = (foto: any) => {
     if (!foto?.formats) return "/placeholder.svg"
-    return `http://localhost:1337${
+    const imageBaseURL = getImageBaseURL()
+    return `${imageBaseURL}${
       foto.formats.medium?.url || foto.formats.small?.url || foto.formats.thumbnail?.url || ""
     }`
   }

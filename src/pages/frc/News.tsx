@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../../config/hooks";
+import { api, getImageBaseURL } from "../../config/hooks";
 
 interface NewsItem {
   id: number;
@@ -20,8 +20,6 @@ interface NewsProps {
   setLoading: (value: boolean) => void;
 }
 
-const BASE_URL = "http://localhost:1337";
-
 function News({ setLoading }: NewsProps) {
   const axios = api();
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -39,12 +37,14 @@ function News({ setLoading }: NewsProps) {
       }
     };
     fetchNews();
-  }, [setLoading]);
+  }, []);
 
-  const getCoverUrl = (item: NewsItem): string =>
-    item?.Cover?.[0]?.formats?.small?.url
-      ? BASE_URL + item.Cover[0].formats.small.url
+  const getCoverUrl = (item: NewsItem): string => {
+    const imageBaseURL = getImageBaseURL();
+    return item?.Cover?.[0]?.formats?.small?.url
+      ? `${imageBaseURL}${item.Cover[0].formats.small.url}`
       : "/default.jpg";
+  };
 
   return (
     <section className="bg-gray-50 py-12 md:py-20 px-4 md:px-20">

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { api } from "../../config/hooks"
+import { api, getImageBaseURL } from "../../config/hooks"
 
 interface DescriptionBlock {
   type: string
@@ -33,7 +33,6 @@ function Testimoni({ setLoading }: TestimoniProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [contentKey, setContentKey] = useState(0)
   const axios = api()
-  const BASE_URL = "http://localhost:1337"
 
   useEffect(() => {
     const fetchTestimoni = async () => {
@@ -50,7 +49,7 @@ function Testimoni({ setLoading }: TestimoniProps) {
     }
 
     fetchTestimoni()
-  }, [setLoading])
+  }, [])
 
   useEffect(() => {
     if (testimoni.length > 0) {
@@ -71,7 +70,8 @@ function Testimoni({ setLoading }: TestimoniProps) {
 
   const getFotoUrl = (item: TestimoniItem | undefined): string => {
     const url = item?.Foto?.formats?.small?.url || item?.Foto?.formats?.thumbnail?.url || item?.Foto?.url
-    return url ? BASE_URL + url : "/placeholder.svg?height=64&width=64"
+    const imageBaseURL = getImageBaseURL()
+    return url ? `${imageBaseURL}${url}` : "/placeholder.svg?height=64&width=64"
   }
 
   return (

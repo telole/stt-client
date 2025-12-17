@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "../../config/hooks";
 import { motion } from "framer-motion";
 
 interface Step {
@@ -16,11 +16,12 @@ interface FlowProps {
 
 function Flow({ setLoading }: FlowProps) {
   const [steps, setSteps] = useState<Step[]>([]);
+  const axiosInstance = api();
 
   useEffect(() => {
     setLoading(true);
-    axios
-      .get("http://localhost:1337/api/alur-daftars?populate[step]=*")
+    axiosInstance
+      .get("alur-daftars?populate[step]=*")
       .then((res) => {
         const data = res.data?.data?.[0]?.step || [];
         const sortedSteps = [...data].sort((a, b) => a.Urutan - b.Urutan);
@@ -28,7 +29,7 @@ function Flow({ setLoading }: FlowProps) {
       })
       .catch((err) => console.error("Fetch error:", err))
       .finally(() => setLoading(false));
-  }, [setLoading]);
+  }, []);
 
   return (
     <div

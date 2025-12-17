@@ -41,7 +41,7 @@ function Profile({ setLoading }: ProfileProps) {
     };
 
     fetchProfile();
-  }, [setLoading]);
+  }, []);
 
   const convertToEmbedUrl = (url: string | undefined) => {
     if (!url) return '';

@@ -1,5 +1,5 @@
 interface FooterProps {
-  setLoading: (value: boolean) => void;
+  setLoading?: (value: boolean) => void;
 }
 
 

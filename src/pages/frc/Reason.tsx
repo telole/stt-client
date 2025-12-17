@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../../config/hooks";
+import { api, getImageBaseURL } from "../../config/hooks";
 
 interface ReasonProps {
   setLoading: (loading: boolean) => void;
@@ -21,8 +21,6 @@ interface ReasonItem {
     };
   };
 }
-
-const BASE_URL = "http://localhost:1337";
 
 function Reason({ setLoading }: ReasonProps) {
   const axios = api();
@@ -50,8 +48,10 @@ function Reason({ setLoading }: ReasonProps) {
 
   if (!reason) return null;
 
-  const getImageUrl = () =>
-    BASE_URL + (reason.Model?.formats?.medium?.url || reason.Model?.url);
+  const getImageUrl = () => {
+    const imageBaseURL = getImageBaseURL();
+    return `${imageBaseURL}${reason.Model?.formats?.medium?.url || reason.Model?.url}`;
+  };
 
   return (
    <section className="bg-yellow-400 py-12 md:py-20 px-4 md:px-20 relative overflow-hidden">

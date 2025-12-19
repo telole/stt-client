@@ -22,11 +22,9 @@ function Main() {
     useEffect(() => {
         axios.get('articles').then((Res) => {
             setData(Res.data.data);
-            console.log("set data :",setData);
         }).catch((error) => {
             console.error("There was an error fetching the articles!", error);
-        }
-        );
+        });
     }, []);
     return (
          <div className="flex items-center justify-center min-h-screen bg-gray-100">

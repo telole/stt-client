@@ -49,8 +49,10 @@ function Reason({ setLoading }: ReasonProps) {
   if (!reason) return null;
 
   const getImageUrl = () => {
+    if (!reason?.Model) return '';
     const imageBaseURL = getImageBaseURL();
-    return `${imageBaseURL}${reason.Model?.formats?.medium?.url || reason.Model?.url}`;
+    const url = reason.Model.formats?.medium?.url || reason.Model.url || '';
+    return url ? `${imageBaseURL}${url}` : '';
   };
 
   return (

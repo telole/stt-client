@@ -8,7 +8,6 @@ import Prodi from './frc/Prodi';
 import Program from './frc/Program';
 import Reason from './frc/Reason';
 import Testimoni from './frc/Testimoni';
-import { NewLineKind } from 'typescript';
 import News from './frc/News';
 import Profile from './frc/Profile';
 import Footer from './composable/Footer';

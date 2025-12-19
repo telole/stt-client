@@ -59,7 +59,7 @@ function Header({ setLoading }: HeaderProps) {
   }, []);
 
   useEffect(() => {
-    if (!hero) return;
+    if (!hero || !hero.Background || hero.Background.length === 0) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % hero.Background.length);
@@ -71,9 +71,9 @@ function Header({ setLoading }: HeaderProps) {
   if (error) return <div className="text-red-500 text-center mt-10">Error: {error}</div>;
   if (!hero) return null;
 
-return (
+  return (
   <div className="relative w-full h-screen overflow-hidden">
-    {hero.Background.map((img, idx) => (
+    {hero.Background && hero.Background.length > 0 && hero.Background.map((img, idx) => (
       <img
         key={img.id}
         src={img.url}

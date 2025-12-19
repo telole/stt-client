@@ -14,9 +14,7 @@ export const api = () => {
     })
 }
 
-// Helper untuk mendapatkan base URL untuk gambar (tanpa /api)
 export const getImageBaseURL = () => {
     const baseURL = getBaseURL()
-    // Hapus /api/ dari akhir URL jika ada
     return baseURL.replace(/\/api\/?$/, '')
 }

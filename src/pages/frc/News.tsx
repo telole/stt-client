@@ -17,7 +17,7 @@ interface NewsItem {
 }
 
 interface NewsProps {
-  setLoading: (value: boolean) => void;
+  setLoading?: (value: boolean) => void;
 }
 
 function News({ setLoading }: NewsProps) {
@@ -27,13 +27,13 @@ function News({ setLoading }: NewsProps) {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        setLoading(true);
+        setLoading?.(true);
         const res = await axios.get("beritas?populate=Cover&sort=createdAt:desc&pagination[limit]=3");
         setNews(res.data.data);
       } catch (error) {
         console.error("Gagal fetch berita:", error);
       } finally {
-        setLoading(false);
+        setLoading?.(false);
       }
     };
     fetchNews();

@@ -86,9 +86,9 @@ function News({ setLoading }: NewsProps) {
         </div>
 
         <div className="text-center">
-          <button className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 md:px-8 py-2 md:py-3 rounded-lg transition-all shadow-md hover:shadow-lg text-sm md:text-base">
+          <a href="/berita" className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 md:px-8 py-2 md:py-3 rounded-lg transition-all shadow-md hover:shadow-lg text-sm md:text-base">
             Lihat Semua Berita
-          </button>
+          </a>
         </div>
       </div>
     </section>

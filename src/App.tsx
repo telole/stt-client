@@ -4,11 +4,13 @@ import LandingPage from './pages/LandingPage';
 import "animate.css";
 import './index.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import News from './pages/frc/News';
 function App() {
   return (
     <BrowserRouter>
     <Routes>
       <Route path='/' element={<LandingPage/>} />
+      <Route path='/berita' element={<News/>} />
     </Routes>
     </BrowserRouter>
   );

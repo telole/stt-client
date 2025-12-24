@@ -1,19 +1,11 @@
 import React from "react";
 import Navbar from "./composable/Navbar";
 
-<<<<<<< HEAD
-export default function NewsPage() {
-  return (
-      <>
-      <Navbar />
-        <div className="flex w-[254px] flex-col gap-[20px] items-center flex-nowrap relative z-[1] mt-[100px] mr-0 mb-0 ml-[833px]">
-=======
 export default function News() {
   return (
     <>
     <Navbar />
         <div className="flex w-[254px] flex-col gap-[20px] items-center flex-nowrap relative z-[96] mt-[100px] mr-0 mb-0 ml-[833px]">
->>>>>>> 4ca63424dd72f1e3cf3d75026baa04fc8b957f12
           <span className="h-[44px] self-stretch shrink-0 basis-auto font-['Montserrat'] text-[36px] font-bold leading-[43.884px] text-[#fff] relative text-left whitespace-nowrap z-[97]">
             Berita Terkini
           </span>

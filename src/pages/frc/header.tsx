@@ -56,6 +56,7 @@ function Header({ setLoading }: HeaderProps) {
         setError(err.message);
         setLoading(false);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -72,11 +73,7 @@ function Header({ setLoading }: HeaderProps) {
   if (!hero) return null;
 
   return (
-<<<<<<< HEAD
   <div className="relative w-full max-w-screen h-screen overflow-hidden">
-=======
-  <div className="relative w-full h-screen overflow-hidden">
->>>>>>> 4ca63424dd72f1e3cf3d75026baa04fc8b957f12
     {hero.Background && hero.Background.length > 0 && hero.Background.map((img, idx) => (
       <img
         key={img.id}
@@ -87,11 +84,7 @@ function Header({ setLoading }: HeaderProps) {
         }`}
       />
     ))}
-<<<<<<< HEAD
     <div className="absolute inset-0 flex flex-col items-start justify-center px-4 sm:px-10 md:px-20 text-white z-10 ml-8 md:ml-16">
-=======
-    <div className="absolute inset-0 flex flex-col items-start justify-center px-4 sm:px-10 md:px-20 text-white z-10">
->>>>>>> 4ca63424dd72f1e3cf3d75026baa04fc8b957f12
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 leading-tight max-w-3xl animate__animated animate__fadeInUp">
         {hero.Headline}
       </h1>

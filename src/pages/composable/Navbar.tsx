@@ -47,11 +47,7 @@ function Navbar() {
   };
 
   return (
-<<<<<<< HEAD
     <nav className="bg-[#013D7B] fixed top-0 left-0 w-full z-[999] shadow-md">
-=======
-    <nav className="bg-[#013D7B] fixed top-0 left-0 w-full z-50 shadow-md">
->>>>>>> 4ca63424dd72f1e3cf3d75026baa04fc8b957f12
       <div className="max-w-7xl mx-auto px-4 py-3 md:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 md:space-x-3">

@@ -57,8 +57,9 @@ function Reason({ setLoading }: ReasonProps) {
 
   return (
    <section className="bg-yellow-400 py-12 md:py-20 px-4 md:px-20 relative overflow-hidden">
+  <div className="absolute w-[300px] h-[300px] md:w-[500px] md:h-[500px] lg:w-[700px] lg:h-[700px] bg-blue-900 rounded-full z-0 top-20 md:top-auto md:right-20 md:translate-y-10 left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0"></div>
   <div className="max-w-6xl mx-auto flex flex-col-reverse md:flex-row items-center justify-between gap-8 md:gap-12 relative z-10">
-    <div className="w-full md:w-1/2">
+    <div className="w-full md:w-1/2 relative z-20">
       <div className="bg-white rounded-2xl p-6 md:p-8 lg:p-10 shadow-lg">
         <h2 className="text-blue-900 text-xl md:text-2xl lg:text-3xl font-bold mb-4 whitespace-pre-line">
           {reason.Title}
@@ -80,12 +81,11 @@ function Reason({ setLoading }: ReasonProps) {
       </div>
     </div>
 
-    <div className="w-full md:w-1/2 relative flex justify-center items-center overflow-visible">
-      <div className="absolute w-[300px] h-[300px] md:w-[500px] md:h-[500px] lg:w-[700px] lg:h-[700px] bg-blue-900 rounded-full -z-10 translate-y-12 md:translate-y-12"></div>
+    <div className="w-full md:w-1/2 relative flex justify-center items-center overflow-visible min-h-[300px] md:min-h-0">
       <img
         src={getImageUrl()}
         alt="Model STTP"
-        className="relative z-10 w-auto h-auto scale-[1.2] md:scale-[2.3] lg:scale-[2.4] object-contain translate-x-[-100px] translate-y-[80px]"
+        className="relative z-10 w-auto h-auto scale-[1.3] md:scale-[2.3] lg:scale-[2.7] object-contain translate-x-[-20px] translate-y-[40px] md:translate-x-[-150px] md:translate-y-[75px]"
       />
     </div>
   </div>

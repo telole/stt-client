@@ -18,7 +18,9 @@ interface ProdiData {
     peluang?: string
   }
   Foto: {
+    url?: string
     formats?: {
+      large?: { url: string }
       medium?: { url: string }
       small?: { url: string }
       thumbnail?: { url: string }
@@ -71,11 +73,22 @@ function Prodi({ setLoading }: ProdiProps) {
   }
 
   const getImageUrl = (foto: any) => {
-    if (!foto?.formats) return "/placeholder.svg"
+    if (!foto) return "/placeholder.svg"
     const imageBaseURL = getImageBaseURL()
-    return `${imageBaseURL}${
-      foto.formats.medium?.url || foto.formats.small?.url || foto.formats.thumbnail?.url || ""
-    }`
+    // Prioritize larger formats for better quality
+    if (foto.formats?.large?.url) {
+      return `${imageBaseURL}${foto.formats.large.url}`
+    }
+    if (foto.formats?.medium?.url) {
+      return `${imageBaseURL}${foto.formats.medium.url}`
+    }
+    if (foto.url) {
+      return `${imageBaseURL}${foto.url}`
+    }
+    if (foto.formats?.small?.url) {
+      return `${imageBaseURL}${foto.formats.small.url}`
+    }
+    return "/placeholder.svg"
   }
 
   const containerVariants = {
@@ -179,6 +192,8 @@ function Prodi({ setLoading }: ProdiProps) {
                     src={getImageUrl(prodi.Foto)}
                     alt={prodi.Name}
                     className="w-full h-full object-cover"
+                    style={{ imageRendering: 'auto' }}
+                    loading="lazy"
                     whileHover={{ scale: 1.1 }}
                     transition={{ duration: 0.3 }}
                   />

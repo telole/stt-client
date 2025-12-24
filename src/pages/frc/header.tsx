@@ -83,7 +83,7 @@ function Header({ setLoading }: HeaderProps) {
         }`}
       />
     ))}
-    <div className="absolute inset-0 flex flex-col items-start justify-center px-4 sm:px-10 md:px-20 text-white z-10">
+    <div className="absolute inset-0 flex flex-col items-start justify-center px-4 sm:px-10 md:px-20 text-white z-10 ml-8 md:ml-16">
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 leading-tight max-w-3xl animate__animated animate__fadeInUp">
         {hero.Headline}
       </h1>

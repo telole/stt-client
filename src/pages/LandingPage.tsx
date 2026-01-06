@@ -12,6 +12,8 @@ import News from './frc/News';
 import Anno from './frc/Anno';
 import Profile from './frc/Profile';
 import Footer from './composable/Footer';
+import KerjaSama from './frc/KerjaSama';
+import Maps from './frc/Maps';
 
 const LandingPage = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -56,12 +58,11 @@ return (
     <Reason setLoading={handleLoading} />
     <Testimoni setLoading={handleLoading} />
     <News setLoading={handleLoading} />
-    <Anno />
+    <Anno  />
     <Profile  setLoading={handleLoading} />
+    <KerjaSama setLoading={handleLoading} />
+    <Maps setLoading={handleLoading} />
     <Footer />
-
-    {/* Conditional loading spinner */}
- 
     {isLoading && (
       <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
         <LoadingSpinner />

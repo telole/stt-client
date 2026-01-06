@@ -39,7 +39,7 @@ function Program({ setLoading }: ProgramProps) {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-            Program-program STT
+            Program Kelas STT Pati
           </h2>
           <div className="w-24 h-1 bg-yellow-400 mx-auto rounded-full"></div>
         </div>

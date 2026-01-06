@@ -19,6 +19,10 @@ interface HeaderProps {
   setLoading: (value: boolean) => void;
 }
 
+function HandleRedirect(path: string) { 
+  window.location.href = 'https://pmb.sttp.ac.id/';
+}
+
 function Header({ setLoading }: HeaderProps) {
   const [hero, setHero] = useState<HeroData | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -56,7 +60,6 @@ function Header({ setLoading }: HeaderProps) {
         setError(err.message);
         setLoading(false);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -68,6 +71,8 @@ function Header({ setLoading }: HeaderProps) {
 
     return () => clearInterval(interval);
   }, [hero]);
+
+
 
   if (error) return <div className="text-red-500 text-center mt-10">Error: {error}</div>;
   if (!hero) return null;
@@ -94,12 +99,12 @@ function Header({ setLoading }: HeaderProps) {
       <p className="text-sm sm:text-base md:text-lg mb-6 max-w-2xl leading-relaxed animate__animated animate__fadeInUp animate_delay-1s">
         {hero.Subheadline}
       </p>
-      <a
-        href="#daftar"
+      <button
+        onClick={() => HandleRedirect("https://pmb.sttp.ac.id/")}
         className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 sm:py-2.5 md:py-3 px-4 sm:px-5 md:px-6 rounded transition-all text-sm sm:text-base md:text-lg animate__animated animate__zoomIn animate__delay-1s"
       >
         Daftar Sekarang
-      </a>
+      </button>
     </div>
   </div>
 );

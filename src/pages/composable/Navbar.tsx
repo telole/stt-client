@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../../config/hooks";
 import { Menu, X, ChevronDown } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 interface NavItem {
   id: number;
   label: string;
@@ -13,6 +13,7 @@ interface NavItem {
 
 function Navbar() {
   const axios = api();
+  const navigate = useNavigate();
   const [menu, setMenu] = useState<NavItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isAkademikOpen, setIsAkademikOpen] = useState(false);
@@ -45,6 +46,10 @@ function Navbar() {
     setIsAkademikOpen(false);
     setIsProdiOpen(false);
   };
+
+  function HandleRedirect(path: string) { 
+    window.location.href = 'https://pmb.sttp.ac.id/';
+  }
 
   return (
     <nav className="bg-[#013D7B] fixed top-0 left-0 w-full z-[999] shadow-md">
@@ -138,7 +143,7 @@ function Navbar() {
             )}
 
             <button
-              onClick={() => scrollToSection("daftar")}
+              onClick={() => HandleRedirect("https://pmb.sttp.ac.id/")}
               className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded transition-all duration-300 transform hover:scale-105"
             >
               Daftar Sekarang

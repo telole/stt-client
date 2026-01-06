@@ -1,91 +1,74 @@
-interface FooterProps {
-  setLoading?: (value: boolean) => void;
-}
+import React from "react";
 
-
-
-function Footer({ setLoading }: FooterProps) {
-    
-    
-
-    return  (
-
-        <>
-        <footer className="bg-blue-900 py-12 md:py-16 px-4 md:px-20" style={{ backgroundColor: '#013D7B' }}>
-    <div className="max-w-6xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+const Footer = () => {
+  return (
+    <footer className="w-full bg-[#052437] py-20 px-6">
+      <div className="max-w-6xl mx-auto flex flex-col gap-12">
         
-        <div className="text-center md:text-left">
-          <div className="flex items-center justify-center md:justify-start mb-4">
-            <img src="sttp.png"
-                 alt="STTP Logo"
-                 className="w-10 h-10 md:w-12 md:h-12 mr-3" />
-            <div>
-              <h3 className="text-white font-bold text-base md:text-lg">TO BE TECHNOPRENEUR</h3>
-            </div>
-          </div>
-          
-          <p className="text-gray-300 text-xs md:text-sm mb-6 leading-relaxed">
-            Sekolahmu adalah langkah awal menuju cita-citamu. Segera daftarkan dirimu. Kami siap melayani!
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 md:px-6 py-2 md:py-3 rounded transition-all text-sm md:text-base">
-              Daftar Sekarang
-            </button>
-            <button className="bg-blue-700 hover:bg-blue-600 text-white font-semibold px-4 md:px-6 py-2 md:py-3 rounded transition-all text-sm md:text-base">
-              Hubungi Via WhatsApp
-            </button>
-          </div>
+        {/* Logo Section */}
+        <div className="flex items-center gap-10">
+          <img
+            src="/footer-logo-1.png"
+            alt="Logo 1"
+            className="w-[57px] h-[54px] object-contain"
+          />
+          <img
+            src="/footer-logo-2.png"
+            alt="Logo 2"
+            className="w-[71px] h-[54px] object-contain"
+          />
+          <img
+            src="/footer-logo-3.png"
+            alt="Logo 3"
+            className="w-[137px] h-[54px] object-contain"
+          />
         </div>
 
-        <div className="text-center md:text-left">
-          <h4 className="text-white font-bold text-base md:text-lg mb-4">Hubungi Kami</h4>
-          <div className="space-y-3">
-            <p className="text-gray-300 text-xs md:text-sm leading-relaxed">
-              Ngepungsono, Kec. Pati, Kabupaten Pati, Jawa Tengah 59119
-            </p>
-            <p className="text-gray-300 text-xs md:text-sm">
-              (0295) 382470
+        {/* Content Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          
+          {/* Raih Mimpimu */}
+          <div className="flex flex-col gap-3 max-w-md">
+            <h3 className="text-white font-bold text-base">
+              Raih Mimpimu Bersama Kami
+            </h3>
+            <p className="text-white text-base leading-relaxed">
+              Sekolahmu adalah langkah awal menuju cita-citamu. Segera daftarkan
+              dirimu, kami siap melayani!
             </p>
           </div>
-        </div>
 
-        <div className="text-center md:text-left">
-          <h4 className="text-white font-bold text-base md:text-lg mb-4">Sosial Media</h4>
-          <div className="space-y-2">
-            <a href="#" className="block text-gray-300 hover:text-yellow-400 text-xs md:text-sm transition-colors">
-              Facebook
-            </a>
-            <a href="#" className="block text-gray-300 hover:text-yellow-400 text-xs md:text-sm transition-colors">
-              Instagram
-            </a>
-            <a href="#" className="block text-gray-300 hover:text-yellow-400 text-xs md:text-sm transition-colors">
-              TikTok
-            </a>
-            <a href="#" className="block text-gray-300 hover:text-yellow-400 text-xs md:text-sm transition-colors">
-              YouTube
-            </a>
+          {/* Hubungi Kami */}
+          <div className="flex flex-col gap-3 max-w-md">
+            <h3 className="text-white font-bold text-base">
+              Hubungi Kami
+            </h3>
+            <p className="text-white text-base leading-relaxed">
+              Jln. Raya Pati Trangkil KM.4,5 Ngepungrojo, kec. Pati, Kabupaten
+              Pati, Jawa Tengah
+            </p>
+            <p className="text-white text-base">
+              08971329888
+            </p>
           </div>
+
+          {/* Sosial Media */}
+          <div className="flex flex-col gap-3">
+            <h3 className="text-white font-bold text-base">
+              Sosial Media
+            </h3>
+            <ul className="text-white text-base leading-6 space-y-1">
+              <li>Facebook</li>
+              <li>Instagram</li>
+              <li>TikTok</li>
+              <li>YouTube</li>
+            </ul>
+          </div>
+
         </div>
       </div>
-    </div>
-  </footer>
-
-      <a
-        href="https://wa.me/6281234567890"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 bg-[#013D7B] text-white px-4 py-2 rounded-full flex items-center shadow-lg z-50 hover:bg-[#0252a0] transition-all space-x-2"
-      >
-        <i className="bi bi-whatsapp text-4xl text-yellow-400"></i>
-        <span className="text-sm sm:text-base font-medium">Hubungi via WhatsApp</span>
-      </a>
-        </>
-    )
-
-
-
-}
+    </footer>
+  );
+};
 
 export default Footer;

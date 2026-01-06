@@ -31,6 +31,10 @@ function Flow({ setLoading }: FlowProps) {
       .finally(() => setLoading(false));
   }, []);
 
+  function HandleRedirect(path: string) { 
+    window.location.href = 'https://pmb.sttp.ac.id/';
+  }
+
   return (
     <div
       id="daftar"
@@ -60,7 +64,7 @@ function Flow({ setLoading }: FlowProps) {
                 <h3 className="text-blue-900 font-bold text-lg mb-2">{step.Title}</h3>
                 <p className="text-sm text-gray-700 mb-4 leading-relaxed">{step.Deskripsi}</p>
                 {step.Urutan === 1 && (
-                  <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded transition-all text-sm">
+                  <button onClick={() => HandleRedirect("https://pmb.sttp.ac.id/")} className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded transition-all text-sm">
                     Daftar Sekarang
                   </button>
                 )}
@@ -91,7 +95,9 @@ function Flow({ setLoading }: FlowProps) {
                 <div className="absolute right-0 top-4 w-10 h-1 bg-yellow-400"></div>
                 <h3 className="text-blue-900 font-bold text-lg mb-2">{steps[0].Title}</h3>
                 <p className="text-sm text-gray-700 mb-4 leading-relaxed">{steps[0].Deskripsi}</p>
-                <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded transition-all text-sm">
+                <button 
+                onClick={() => HandleRedirect("https://pmb.sttp.ac.id/")}
+                 className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded transition-all text-sm">
                   Daftar Sekarang
                 </button>
               </div>

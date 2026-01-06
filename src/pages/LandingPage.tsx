@@ -9,6 +9,7 @@ import Program from './frc/Program';
 import Reason from './frc/Reason';
 import Testimoni from './frc/Testimoni';
 import News from './frc/News';
+import Anno from './frc/Anno';
 import Profile from './frc/Profile';
 import Footer from './composable/Footer';
 
@@ -55,6 +56,7 @@ return (
     <Reason setLoading={handleLoading} />
     <Testimoni setLoading={handleLoading} />
     <News setLoading={handleLoading} />
+    <Anno />
     <Profile  setLoading={handleLoading} />
     <Footer />
 

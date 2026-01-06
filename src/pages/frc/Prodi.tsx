@@ -157,8 +157,20 @@ function Prodi({ setLoading }: ProdiProps) {
 
   return (
     <>
-      <section ref={sectionRef} id="program-studi" className="bg-black py-12 md:py-20 px-4 md:px-20">
-        <div className="max-w-6xl mx-auto">
+      <section 
+        ref={sectionRef} 
+        id="program-studi" 
+        className="relative py-12 md:py-20 px-4 md:px-20 shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+        style={{
+          backgroundImage: 'url(/parallax.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="max-w-6xl mx-auto relative z-10">
           <motion.div
             className="text-center mb-12 md:mb-16"
             initial={{ opacity: 0, y: -30 }}

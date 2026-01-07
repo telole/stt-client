@@ -1,117 +1,231 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { api, getImageBaseURL } from '../config/hooks';
+import Navbar from './composable/Navbar';
+import Footer from './composable/Footer';
+
+interface Author {
+  name: string;
+}
+
+interface ContentNode {
+  type: string;
+  children?: ContentNode[];
+  text?: string;
+}
+
+interface BeritaDetail {
+  id: number;
+  Title: string;
+  slug: string;
+  publishedAt: string;
+  Content?: ContentNode[];
+  author?: Author;
+  Cover?: {
+    formats?: {
+      small?: { url: string };
+      medium?: { url: string };
+      thumbnail?: { url: string };
+      large?: { url: string };
+    };
+    url: string;
+  }[];
+  Image?: {
+    url: string;
+    formats?: {
+      thumbnail?: { url: string };
+      small?: { url: string };
+      medium?: { url: string };
+      large?: { url: string };
+    };
+  };
+}
 
 const NewsDetail = () => {
-  return (
-    <div className="flex w-full max-w-[1920px] pt-[90px] flex-col gap-2.5 items-start flex-nowrap relative mx-auto">
-      <div className="flex w-full max-w-[1920px] flex-col items-start flex-shrink-0 flex-nowrap relative">
-        <div className="flex w-full max-w-[1920px] px-[410px] py-[68px] flex-col gap-[30px] items-center flex-shrink-0 flex-nowrap bg-white relative z-[1]">
-          <div className="flex min-w-0 flex-col gap-1.5 items-start self-stretch flex-shrink-0 flex-nowrap relative z-[2]">
-            <div className="flex w-[87px] items-center flex-shrink-0 flex-nowrap relative z-[3] cursor-pointer">
-              <div
-                className="w-5 h-5 flex-shrink-0 bg-center bg-cover bg-no-repeat relative overflow-hidden z-[4]"
-                style={{
-                  backgroundImage: 'url(https://codia-f2c.s3.us-west-1.amazonaws.com/image/2026-01-06/DOkGi5sgqS.png)',
-                }}
-              ></div>
-              <span className="h-5 flex-shrink-0 flex-basis-auto font-['Montserrat'] text-base font-normal leading-[19.504px] text-black/50 relative text-left whitespace-nowrap z-[5]">
-                Kembali
-              </span>
-            </div>
-            
-            <span className="h-[29px] self-stretch flex-shrink-0 flex-basis-auto font-['Montserrat'] text-2xl font-bold leading-[29px] text-black relative text-left whitespace-nowrap z-[6]">
-              Kreativitas Tanpa Batas: Menuju Indonesia Emas di Era Industri 4.0
-            </span>
-            
-            <span className="h-5 self-stretch flex-shrink-0 flex-basis-auto font-['Montserrat'] text-base font-normal leading-[19.504px] text-[#206fa0] relative text-left whitespace-nowrap z-[7]">
-              Pati, 3 Oktober 2024
-            </span>
-          </div>
-          
-          <div
-            className="w-[550px] h-[367px] flex-shrink-0 bg-center bg-cover bg-no-repeat rounded-[10px] relative z-[8]"
-            style={{
-              backgroundImage: 'url(https://codia-f2c.s3.us-west-1.amazonaws.com/image/2026-01-06/bvQcSzUcDU.png)',
-            }}
-          ></div>
-          
-          <span className="flex w-[1100px] min-w-0 h-20 items-start self-stretch flex-shrink-0 font-['Montserrat'] text-base font-normal leading-[19.504px] text-black relative text-justify z-[9]">
-            Era Industri 4.0 telah membawa perubahan besar dalam berbagai aspek
-            kehidupan manusia. Perkembangan teknologi digital seperti kecerdasan
-            buatan (Artificial Intelligence), Internet of Things (IoT), big
-            data, dan otomatisasi telah mengubah cara manusia bekerja, belajar,
-            dan berinovasi. Di tengah arus perubahan ini, kreativitas menjadi
-            kunci utama dalam mendorong kemajuan bangsa menuju visi Indonesia
-            Emas.
-          </span>
-          
-          <span className="min-w-0 h-6 self-stretch flex-shrink-0 flex-basis-auto font-['Montserrat'] text-xl font-bold leading-6 text-black relative text-justify whitespace-nowrap z-[10]">
-            Peran Kreativitas di Era Industri 4.0
-          </span>
-          
-          <span className="flex w-[1100px] min-w-0 h-20 items-start self-stretch flex-shrink-0 font-['Montserrat'] text-base font-normal leading-[19.504px] text-black relative text-justify z-[11]">
-            Kreativitas tidak lagi terbatas pada bidang seni semata, tetapi
-            telah menjadi fondasi utama dalam dunia industri, pendidikan, dan
-            teknologi. Di era Industri 4.0, kreativitas berperan sebagai
-            kemampuan untuk melihat peluang, memecahkan masalah secara inovatif,
-            serta menciptakan solusi yang relevan dengan kebutuhan zaman.
-            Individu yang kreatif mampu beradaptasi dengan cepat terhadap
-            perubahan dan menciptakan nilai baru dari kemajuan teknologi.
-          </span>
-        </div>
+  const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
+  const [berita, setBerita] = useState<BeritaDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!slug) {
+      setLoading(false);
+      return;
+    }
+
+    const axios = api();
+    const query = `beritas?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=Cover`;
+    
+    axios
+      .get(query)
+      .then((res) => {
+        const data = res.data?.data?.[0];
+        if (data) {
+          setBerita(data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching berita detail:', err);
+        setLoading(false);
+      });
+  }, [slug]);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    return `Pati, ${day} ${month} ${year}`;
+  };
+
+  const getImageUrl = (berita: BeritaDetail): string => {
+    const imageBaseURL = getImageBaseURL();
+    
+    // Try Cover first (array) - same as News.tsx
+    if (berita?.Cover?.[0]?.formats?.medium?.url) {
+      return `${imageBaseURL}${berita.Cover[0].formats.medium.url}`;
+    }
+    if (berita?.Cover?.[0]?.formats?.large?.url) {
+      return `${imageBaseURL}${berita.Cover[0].formats.large.url}`;
+    }
+    if (berita?.Cover?.[0]?.url) {
+      return `${imageBaseURL}${berita.Cover[0].url}`;
+    }
+    
+    // Fallback to Image (single object)
+    if (berita?.Image?.formats?.large?.url) {
+      return `${imageBaseURL}${berita.Image.formats.large.url}`;
+    }
+    if (berita?.Image?.formats?.medium?.url) {
+      return `${imageBaseURL}${berita.Image.formats.medium.url}`;
+    }
+    if (berita?.Image?.url) {
+      return `${imageBaseURL}${berita.Image.url}`;
+    }
+    
+    return '';
+  };
+
+  const renderContent = (content: ContentNode[]): React.ReactElement[] => {
+    const elements: React.ReactElement[] = [];
+    
+    content.forEach((node, index) => {
+      if (node.type === 'paragraph') {
+        const text = node.children?.map(child => child.text || '').join('') || '';
+        if (!text.trim()) {
+          elements.push(<br key={index} />);
+          return;
+        }
         
-        <div className="w-full max-w-[1920px] h-[492px] flex-shrink-0 relative z-[12]">
-          <div className="w-full max-w-[1920px] h-[492px] bg-[#052437] absolute top-0 left-1/2 transform -translate-x-1/2 z-[13]"></div>
-          
-          <div className="flex w-[1087px] gap-[50px] justify-center items-start flex-wrap relative z-[14] mt-[140px] ml-[416.5px]">
-            <div className="flex w-[446px] flex-col gap-[15px] items-start flex-nowrap relative z-[15]">
-              <span className="min-w-0 h-5 self-stretch flex-shrink-0 flex-basis-auto font-['Montserrat'] text-base font-bold leading-[19.504px] text-white relative text-left whitespace-nowrap z-[16]">
-                Raih Mimpimu Bersama Kami
-              </span>
-              
-              <span className="flex w-[379px] h-[60px] items-start flex-shrink-0 font-['Montserrat'] text-base font-normal leading-[19.504px] text-white relative text-justify z-[17]">
-                Sekolahmu adalah langkah awal menuju cita-citamu. Segera
-                daftarkan dirimu, kami siap melayani!
-              </span>
-              
-              <div className="flex min-w-0 gap-[30px] items-center self-stretch flex-shrink-0 flex-nowrap relative z-[18]">
-                <div className="flex w-[177px] px-5 py-[15px] gap-2.5 justify-center items-center flex-shrink-0 flex-nowrap bg-[#f0cd02] rounded-[10px] relative z-[19] cursor-pointer hover:bg-[#d9b802] transition-colors">
-                  <span className="h-5 flex-shrink-0 flex-basis-auto font-['Montserrat'] text-base font-bold leading-[19.504px] text-[#0b466a] relative text-left whitespace-nowrap z-[20]">
-                    Daftar Sekarang
-                  </span>
-                </div>
-                
-                <div className="flex w-[239px] px-5 py-[15px] gap-2.5 justify-center items-center flex-shrink-0 flex-nowrap bg-[#0b466a] rounded-[10px] relative z-[21] cursor-pointer hover:bg-[#093a56] transition-colors">
-                  <span className="h-5 flex-shrink-0 flex-basis-auto font-['Montserrat'] text-base font-bold leading-[19.504px] text-white relative text-left whitespace-nowrap z-[22]">
-                    Hubungi Via WhatsApp
-                  </span>
-                </div>
+        // Check if text looks like a heading (short, bold-like, or contains keywords)
+        if (text.length < 100 && (text.includes('Peran') || text.includes('Era') || text.includes('Industri'))) {
+          elements.push(
+            <h2 key={index} className="text-xl font-bold text-black mb-4 mt-6">
+              {text}
+            </h2>
+          );
+        } else {
+          elements.push(
+            <p key={index} className="mb-4 text-base leading-relaxed text-justify">
+              {text}
+            </p>
+          );
+        }
+      }
+    });
+    
+    return elements;
+  };
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-[#e4f6ff] flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#013d7b] mx-auto"></div>
+            <p className="mt-4 text-[#013d7b]">Memuat berita...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (!berita) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-[#e4f6ff] flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-gray-500 text-lg">Berita tidak ditemukan</p>
+            <button
+              onClick={() => navigate('/berita')}
+              className="mt-4 px-4 py-2 bg-[#013d7b] text-white rounded hover:bg-[#206fa0] transition-colors"
+            >
+              Kembali ke Berita
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-white pt-24 pb-16">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20">
+          {/* Back Button */}
+          <div 
+            className="flex items-center gap-2 mb-6 cursor-pointer hover:opacity-70 transition-opacity"
+            onClick={() => navigate('/berita')}
+          >
+            <svg className="w-5 h-5 text-black/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="text-base font-normal text-black/50">Kembali</span>
+          </div>
+
+          {/* Article Header */}
+          <div className="mb-6">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-3">
+              {berita.Title}
+            </h1>
+            <p className="text-base font-normal text-[#206fa0]">
+              {formatDate(berita.publishedAt)}
+            </p>
+          </div>
+
+          {/* Article Image */}
+          {getImageUrl(berita) && (
+            <div className="mb-8">
+              <img
+                src={getImageUrl(berita)}
+                alt={berita.Title}
+                className="w-full max-w-4xl mx-auto rounded-[10px] object-cover"
+                style={{ maxHeight: '500px' }}
+              />
+            </div>
+          )}
+
+          {/* Article Content */}
+          {berita.Content && berita.Content.length > 0 && (
+            <div className="max-w-4xl mx-auto">
+              <div className="prose prose-lg max-w-none">
+                {renderContent(berita.Content)}
               </div>
             </div>
-            
-            <div className="flex w-[436px] flex-col gap-[15px] items-start flex-nowrap relative z-[23]">
-              <span className="min-w-0 h-5 self-stretch flex-shrink-0 flex-basis-auto font-['Montserrat'] text-base font-bold leading-[19.504px] text-white relative text-left whitespace-nowrap z-[24]">
-                Hubungi Kami
-              </span>
-              
-              <span className="flex w-[436px] min-w-0 h-20 items-start self-stretch flex-shrink-0 font-['Montserrat'] text-base font-normal leading-[19.504px] text-white relative text-justify z-[25]">
-                Ngepungrojo, Kec. Pati, Kabupaten Pati, Jawa Tengah 59119<br /><br />(0295)
-                382470
-              </span>
-            </div>
-            
-            <div className="flex w-[105px] flex-col gap-[15px] items-start flex-nowrap relative z-[26]">
-              <span className="h-5 self-stretch flex-shrink-0 flex-basis-auto font-['Montserrat'] text-base font-bold leading-[19.504px] text-white relative text-left whitespace-nowrap z-[27]">
-                Sosial Media
-              </span>
-              
-              <span className="flex w-[105px] h-24 items-start self-stretch flex-shrink-0 font-['Montserrat'] text-base font-normal leading-6 text-white relative text-justify overflow-hidden text-overflow-initial z-[28]">
-                Facebook <br />Instagram <br />TikTok <br />YouTube
-              </span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
-    </div>
+      
+      <Footer />
+    </>
   );
 };
 

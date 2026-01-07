@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../config/hooks";
 import { Menu, X, ChevronDown } from "lucide-react";
 
@@ -12,6 +13,7 @@ interface NavItem {
 }
 
 function Navbar() {
+  const navigate = useNavigate();
   const [menu, setMenu] = useState<NavItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isAkademikOpen, setIsAkademikOpen] = useState(false);
@@ -23,13 +25,15 @@ function Navbar() {
       .get("navbar?populate=header")
       .then((res) => {
         const data = res.data.data;
-        const headerItems: NavItem[] = data.header.map((item: any) => ({
-          id: item.id,
-          label: item.Label,
-          Path: item.Path,
-          Icon: item.Icon,
-        }));
-        setMenu(headerItems);
+        if (data && data.header && Array.isArray(data.header)) {
+          const headerItems: NavItem[] = data.header.map((item: any) => ({
+            id: item.id,
+            label: item.label || item.Label || '',
+            Path: item.Path || item.path || '',
+            Icon: item.Icon || item.icon || null,
+          }));
+          setMenu(headerItems);
+        }
       })
       .catch((err) => {
         console.error("Error fetching navbar:", err);
@@ -44,12 +48,25 @@ function Navbar() {
   const toggleProdi = () => setIsProdiOpen((prev) => !prev);
 
   const scrollToSection = (path: string) => {
-    // Remove leading slash and hash if present
-    const sectionId = path.replace(/^[#/]+/, "");
-    const el = document.getElementById(sectionId);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
+    const sectionId = path.replace(/^\/+/, "");
+    
+    const currentPath = window.location.pathname;
+    
+    if (currentPath === '/' || currentPath === '') {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      navigate('/');
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
     }
+    
     setIsOpen(false);
     setIsAkademikOpen(false);
     setIsProdiOpen(false);
@@ -63,8 +80,11 @@ function Navbar() {
     <nav className="bg-[#013D7B] fixed top-0 left-0 w-full z-[999] shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-3 md:py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 md:space-x-3">
-            <img src="sttp.png" alt="Logo" className="h-10 md:h-12 w-auto" />
+          <div 
+            className="flex items-center space-x-2 md:space-x-3 cursor-pointer"
+            onClick={() => navigate('/')}
+          >
+            <img src="/sttp.png" alt="Logo" className="h-10 md:h-12 w-auto" />
             <span className="text-white font-bold text-sm md:text-lg hidden sm:block">
               SEKOLAH TINGGI TEKNIK PATI
             </span>

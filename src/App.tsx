@@ -4,8 +4,8 @@ import LandingPage from './pages/LandingPage';
 import "animate.css";
 import './index.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import News from './pages/frc/News';
 import NewsPage from './pages/News';
+import NewsDetail from './pages/NewsDetail';
 import Dosen from './pages/Dosen';
 
 function App() {
@@ -14,6 +14,7 @@ function App() {
     <Routes>
       <Route path='/' element={<LandingPage/>} />
       <Route path='/berita' element={<NewsPage/>} />
+      <Route path='/berita/:slug' element={<NewsDetail/>} />
       <Route path='/dosens' element={<Dosen/>} />
     </Routes>
     </BrowserRouter>

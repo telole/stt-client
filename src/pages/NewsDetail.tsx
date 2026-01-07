@@ -125,13 +125,13 @@ const NewsDetail = () => {
         // Check if text looks like a heading (short, bold-like, or contains keywords)
         if (text.length < 100 && (text.includes('Peran') || text.includes('Era') || text.includes('Industri'))) {
           elements.push(
-            <h2 key={index} className="text-xl font-bold text-black mb-4 mt-6">
+            <h2 key={index} className="text-lg sm:text-xl font-bold text-black mb-3 sm:mb-4 mt-4 sm:mt-6">
               {text}
             </h2>
           );
         } else {
           elements.push(
-            <p key={index} className="mb-4 text-base leading-relaxed text-justify">
+            <p key={index} className="mb-3 sm:mb-4 text-sm sm:text-base leading-relaxed text-justify">
               {text}
             </p>
           );
@@ -151,7 +151,7 @@ const NewsDetail = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#013d7b] mx-auto"></div>
             <p className="mt-4 text-[#013d7b]">Memuat berita...</p>
           </div>
-        </div>
+                </div>
       </>
     );
   }
@@ -169,8 +169,8 @@ const NewsDetail = () => {
             >
               Kembali ke Berita
             </button>
-          </div>
-        </div>
+                </div>
+              </div>
       </>
     );
   }
@@ -178,37 +178,37 @@ const NewsDetail = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white pt-24 pb-16">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20">
+      <div className="min-h-screen bg-white pt-20 sm:pt-24 pb-12 sm:pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
           {/* Back Button */}
           <div 
-            className="flex items-center gap-2 mb-6 cursor-pointer hover:opacity-70 transition-opacity"
+            className="flex items-center gap-2 mb-4 sm:mb-6 cursor-pointer hover:opacity-70 transition-opacity"
             onClick={() => navigate('/berita')}
           >
-            <svg className="w-5 h-5 text-black/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-black/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            <span className="text-base font-normal text-black/50">Kembali</span>
-          </div>
-
+            <span className="text-sm sm:text-base font-normal text-black/50">Kembali</span>
+            </div>
+            
           {/* Article Header */}
-          <div className="mb-6">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-3">
+          <div className="mb-4 sm:mb-6">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-2 sm:mb-3 leading-tight">
               {berita.Title}
             </h1>
-            <p className="text-base font-normal text-[#206fa0]">
+            <p className="text-sm sm:text-base font-normal text-[#206fa0]">
               {formatDate(berita.publishedAt)}
             </p>
           </div>
 
           {/* Article Image */}
           {getImageUrl(berita) && (
-            <div className="mb-8">
+            <div className="mb-6 sm:mb-8">
               <img
                 src={getImageUrl(berita)}
                 alt={berita.Title}
                 className="w-full max-w-4xl mx-auto rounded-[10px] object-cover"
-                style={{ maxHeight: '500px' }}
+                style={{ maxHeight: '300px', height: 'auto' }}
               />
             </div>
           )}
@@ -216,7 +216,7 @@ const NewsDetail = () => {
           {/* Article Content */}
           {berita.Content && berita.Content.length > 0 && (
             <div className="max-w-4xl mx-auto">
-              <div className="prose prose-lg max-w-none">
+              <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
                 {renderContent(berita.Content)}
               </div>
             </div>

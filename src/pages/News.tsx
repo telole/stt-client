@@ -83,34 +83,34 @@ export default function News() {
       <Navbar />
       
       {/* Banner Section */}
-      <div className="relative w-full h-[300px] md:h-[400px] flex items-center justify-center overflow-hidden">
+      <div className="relative w-full h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat brightness-50"
           style={{
             backgroundImage: 'url(/parallax.jpg)'
           }}
         />
-        <div className="relative z-10 text-center">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+        <div className="relative z-10 text-center px-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
             Berita Terkini
           </h1>
-          <div className="w-32 md:w-52 h-2 bg-[#f0cd02] mx-auto"></div>
+          <div className="w-24 sm:w-32 md:w-52 h-1.5 sm:h-2 bg-[#f0cd02] mx-auto"></div>
         </div>
       </div>
 
       {/* News Content Section */}
-      <div className="min-h-screen bg-white py-16 px-4 md:px-8 lg:px-20">
+      <div className="min-h-screen bg-white py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
         <div className="max-w-7xl mx-auto">
           {beritaList.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
               {beritaList.map((berita) => (
                 <div
                   key={berita.id}
                   onClick={() => navigate(`/berita/${berita.slug}`)}
-                  className="bg-[#e4f6ff] rounded-[10px] overflow-hidden shadow-[5px_7px_19px_0_rgba(0,0,0,0.03)] cursor-pointer hover:shadow-[5px_7px_19px_0_rgba(0,0,0,0.1)] transition-all duration-300 transform hover:scale-105 flex flex-col"
+                  className="bg-[#e4f6ff] rounded-[10px] overflow-hidden shadow-[5px_7px_19px_0_rgba(0,0,0,0.03)] cursor-pointer hover:shadow-[5px_7px_19px_0_rgba(0,0,0,0.1)] transition-all duration-300 transform hover:scale-[1.02] sm:hover:scale-105 flex flex-col"
                 >
                   {/* Image */}
-                  <div className="h-[200px] w-full bg-gray-200 overflow-hidden">
+                  <div className="h-[180px] sm:h-[200px] w-full bg-gray-200 overflow-hidden">
                     <img
                       src={getImageUrl(berita)}
                       alt={berita.Title}
@@ -119,11 +119,11 @@ export default function News() {
                   </div>
                   
                   {/* Content */}
-                  <div className="p-5 flex flex-col gap-4 flex-1">
-                    <span className="text-[16px] font-normal leading-[19.504px] text-[#206fa0]">
+                  <div className="p-4 sm:p-5 flex flex-col gap-3 sm:gap-4 flex-1">
+                    <span className="text-sm sm:text-base font-normal leading-[19.504px] text-[#206fa0]">
                       {formatDate(berita.publishedAt)}
                     </span>
-                    <h3 className="text-[20px] font-medium leading-[24.38px] text-black line-clamp-3 flex-1">
+                    <h3 className="text-base sm:text-lg md:text-xl font-medium leading-tight sm:leading-[24.38px] text-black line-clamp-3 flex-1">
                       {berita.Title}
                     </h3>
                   </div>
@@ -131,8 +131,8 @@ export default function News() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20">
-              <p className="text-gray-500 text-lg">Tidak ada berita</p>
+            <div className="text-center py-12 sm:py-20">
+              <p className="text-gray-500 text-base sm:text-lg">Tidak ada berita</p>
             </div>
           )}
         </div>

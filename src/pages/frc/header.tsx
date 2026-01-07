@@ -27,10 +27,10 @@ function Header({ setLoading }: HeaderProps) {
   const [hero, setHero] = useState<HeroData | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const axios = api();
 
   useEffect(() => {
     setLoading(true);
+    const axios = api();
     axios
       .get("hero?populate=Background")
       .then((res) => {
@@ -60,6 +60,7 @@ function Header({ setLoading }: HeaderProps) {
         setError(err.message);
         setLoading(false);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -89,22 +90,30 @@ function Header({ setLoading }: HeaderProps) {
         }`}
       />
     ))}
-    <div className="absolute inset-0 flex flex-col items-start justify-center px-4 sm:px-10 md:px-20 text-white z-10 ml-8 md:ml-16">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 leading-tight max-w-3xl animate__animated animate__fadeInUp">
+    <div className="absolute inset-0 flex flex-col items-start justify-center px-4 sm:px-10 md:px-20 text-white z-10 ml-4 sm:ml-8 md:ml-16">
+      <h1 className="font-['Poppins'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 leading-tight max-w-3xl animate__animated animate__fadeInUp">
         {hero.Headline}
       </h1>
-      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight max-w-3xl animate__animated animate__fadeInUp animate-delay-1s">
+      <h2 className="font-['Poppins'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-4 leading-tight max-w-3xl animate__animated animate__fadeInUp animate-delay-1s">
         {hero.Headline2}
       </h2>
-      <p className="text-sm sm:text-base md:text-lg mb-6 max-w-2xl leading-relaxed animate__animated animate__fadeInUp animate_delay-1s">
+      <p className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-6xl mb-4 sm:mb-6 max-w-2xl leading-relaxed animate__animated animate__fadeInUp animate_delay-1s italic" style={{ fontFamily: "'Brush Script MT', 'Brush Script', cursive" }}>
         {hero.Subheadline}
       </p>
-      <button
-        onClick={() => HandleRedirect("https://pmb.sttp.ac.id/")}
-        className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 sm:py-2.5 md:py-3 px-4 sm:px-5 md:px-6 rounded transition-all text-sm sm:text-base md:text-lg animate__animated animate__zoomIn animate__delay-1s"
-      >
-        Daftar Sekarang
-      </button>
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 animate__animated animate__zoomIn animate__delay-1s">
+        <button
+          onClick={() => HandleRedirect("https://pmb.sttp.ac.id/")}
+          className="font-['Poppins'] bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2.5 sm:py-3 px-5 sm:px-6 md:px-8 rounded transition-all text-sm sm:text-base md:text-lg"
+        >
+          Daftar Sekarang
+        </button>
+        <button
+          onClick={() => window.open('https://wa.me/628971329888', '_blank')}
+          className="font-['Poppins'] bg-[#0b466a] hover:bg-[#093a56] text-white font-bold py-2.5 sm:py-3 px-5 sm:px-6 md:px-8 rounded transition-all text-sm sm:text-base md:text-lg"
+        >
+          Hubungi Via WhatsApp
+        </button>
+      </div>
     </div>
   </div>
 );

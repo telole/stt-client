@@ -19,14 +19,12 @@ const LandingPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const loadingCountRef = useRef(0);
 
-  // Fungsi untuk mengelola loading state dengan counter
   const handleLoading = useCallback((loading: boolean) => {
     if (loading) {
       loadingCountRef.current += 1;
       setIsLoading(true);
     } else {
       loadingCountRef.current = Math.max(0, loadingCountRef.current - 1);
-      // Gunakan setTimeout untuk memastikan state update terjadi setelah semua setLoading selesai
       setTimeout(() => {
         if (loadingCountRef.current === 0) {
           setIsLoading(false);
@@ -35,11 +33,9 @@ const LandingPage = () => {
     }
   }, []);
 
-  // Fallback timeout - jika loading terlalu lama, force hide setelah 10 detik
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (isLoading) {
-        console.warn('Loading timeout - forcing hide');
         setIsLoading(false);
       }
     }, 10000);

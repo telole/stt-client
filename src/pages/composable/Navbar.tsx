@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../../config/hooks";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+
 interface NavItem {
   id: number;
   label: string;
@@ -12,19 +12,23 @@ interface NavItem {
 }
 
 function Navbar() {
-  const axios = api();
-  const navigate = useNavigate();
   const [menu, setMenu] = useState<NavItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isAkademikOpen, setIsAkademikOpen] = useState(false);
   const [isProdiOpen, setIsProdiOpen] = useState(false);
 
   useEffect(() => {
+    const axios = api();
     axios
       .get("navbar?populate=header")
       .then((res) => {
         const data = res.data.data;
-        const headerItems: NavItem[] = data.header;
+        const headerItems: NavItem[] = data.header.map((item: any) => ({
+          id: item.id,
+          label: item.Label,
+          Path: item.Path,
+          Icon: item.Icon,
+        }));
         setMenu(headerItems);
       })
       .catch((err) => {
@@ -39,9 +43,13 @@ function Navbar() {
   };
   const toggleProdi = () => setIsProdiOpen((prev) => !prev);
 
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+  const scrollToSection = (path: string) => {
+    // Remove leading slash and hash if present
+    const sectionId = path.replace(/^[#/]+/, "");
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
     setIsOpen(false);
     setIsAkademikOpen(false);
     setIsProdiOpen(false);
@@ -67,9 +75,7 @@ function Navbar() {
               item.label !== "Akademik" ? (
                 <button
                   key={item.id}
-                  onClick={() =>
-                    scrollToSection(index === 0 ? "profile" : item.Path.replace("#", ""))
-                  }
+                  onClick={() => scrollToSection(item.Path)}
                   className="text-white hover:text-yellow-300 transition-colors duration-300"
                 >
                   {item.label}
@@ -185,9 +191,7 @@ function Navbar() {
               item.label !== "Akademik" ? (
                 <button
                   key={item.id}
-                  onClick={() =>
-                    scrollToSection(index === 0 ? "profile" : item.Path.replace("#", ""))
-                  }
+                  onClick={() => scrollToSection(item.Path)}
                   className={`block text-white hover:text-yellow-300 transition-all duration-300 transform ${
                     isOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
                   } w-full text-left`}

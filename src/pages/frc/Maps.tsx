@@ -8,7 +8,6 @@ const Maps = ({ setLoading }: MapsProps) => {
   return (
     <section className="w-full bg-[#013d7b] py-16 md:py-28 px-4 md:px-20">
       <div className="max-w-6xl mx-auto flex flex-col gap-10 md:gap-20 justify-center items-center">
-        {/* Title Section */}
         <div className="flex flex-col gap-5 items-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center">
             Peta

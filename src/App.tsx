@@ -6,12 +6,15 @@ import './index.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import News from './pages/frc/News';
 import NewsPage from './pages/News';
+import Dosen from './pages/Dosen';
+
 function App() {
   return (
     <BrowserRouter>
     <Routes>
       <Route path='/' element={<LandingPage/>} />
       <Route path='/berita' element={<NewsPage/>} />
+      <Route path='/dosens' element={<Dosen/>} />
     </Routes>
     </BrowserRouter>
   );

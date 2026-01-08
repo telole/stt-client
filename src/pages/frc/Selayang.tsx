@@ -51,7 +51,7 @@ function Selayang({ setLoading }: SelayangProps) {
       : "";
 
   return (
-    <section className="bg-white border border-blue-500 px-4 md:px-20 pt-12 md:pt-16 pb-0 relative overflow-hidden">
+    <section id="selayang-pandang" className="bg-white border border-blue-500 px-4 md:px-20 pt-12 md:pt-16 pb-0 relative overflow-hidden">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-10 relative z-10">
 
         <motion.div

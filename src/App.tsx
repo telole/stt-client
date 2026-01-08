@@ -8,6 +8,7 @@ import NewsPage from './pages/News';
 import NewsDetail from './pages/NewsDetail';
 import Dosen from './pages/Dosen';
 import Curriculums from './pages/Curriculums';
+import Akreditasi from './pages/Akreditasi';
 import Fallback from './pages/Fallback';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
       <Route path='/berita/:slug' element={<NewsDetail/>} />
       <Route path='/dosens' element={<Dosen/>} />
       <Route path='/kurikulum' element={<Curriculums/>} />
+      <Route path='/akreditasi' element={<Akreditasi/>} />
       <Route path='*' element={<Fallback/>} />
     </Routes>
     </BrowserRouter>

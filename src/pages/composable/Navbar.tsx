@@ -129,19 +129,19 @@
                       }`}
                     >
                       <button
-                        onClick={() => scrollToSection("kata-sambutan")}
+                        onClick={() => scrollToSection("selayang-pandang")}
                         className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                       >
                         Kata sambutan
                       </button>
                       <button
-                        onClick={() => scrollToSection("visi-misi")}
+                        onClick={() => scrollToSection("profile")}
                         className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                       >
                         Visi Misi
                       </button>
                       <button
-                        onClick={() => scrollToSection("ulasan-singkat")}
+                        onClick={() => navigate('/ulasan-singkat')}
                         className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                       >
                         Ulasan Singkat
@@ -225,13 +225,13 @@
                                   Manajemen
                                 </button>
                                 <button
-                                  onClick={() => scrollToSection("program-studi")}
+                                  onClick={() => navigate('/caldik')}
                                   className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                                 >
                                   Caldik
                                 </button>
                                 <button
-                                  onClick={() => scrollToSection("program-studi")}
+                                  onClick={() => navigate('/baak')}
                                   className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                                 >
                                   BAAK
@@ -252,7 +252,7 @@
                             Mahasiswa
                           </button>
                           <button
-                            onClick={() => scrollToSection("akreditasi")}
+                            onClick={() => navigate('/akreditasi')}
                             className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                           >
                             Akreditasi
@@ -264,25 +264,25 @@
                             Kurikulum
                           </button>
                           <button
-                            onClick={() => scrollToSection("krs")}
+                            onClick={() => navigate('/krs')}
                             className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                           >
                             KRS
                           </button>
                           <button
-                            onClick={() => scrollToSection("khs")}
+                            onClick={() => navigate('/khs')}
                             className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                           >
                             KHS
                           </button>
                           <button
-                            onClick={() => scrollToSection("jadwal-matkul")}
+                            onClick={() => navigate('/jadwal-matkul')}
                             className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                           >
                             Jadwal Matkul
                           </button>
                           <button
-                            onClick={() => scrollToSection("kalender-akademik")}
+                            onClick={() => navigate('/kalender-akademik')}
                             className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                           >
                             Kalender Akademik
@@ -361,19 +361,19 @@
                     >
                       <div className="space-y-2 ml-2">
                         <button
-                          onClick={() => scrollToSection("kata-sambutan")}
+                          onClick={() => scrollToSection("selayang-pandang")}
                           className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                         >
                           Kata sambutan
                         </button>
                         <button
-                          onClick={() => scrollToSection("visi-misi")}
+                          onClick={() => scrollToSection("profile")}
                           className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                         >
                           Visi Misi
                         </button>
                         <button
-                          onClick={() => scrollToSection("ulasan-singkat")}
+                          onClick={() => navigate('/ulasan-singkat')}
                           className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                         >
                           Ulasan Singkat
@@ -455,13 +455,13 @@
                               Manajemen
                             </button>
                             <button
-                              onClick={() => scrollToSection("program-studi")}
+                              onClick={() => navigate('/caldik')}
                               className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                             >
                               Caldik
                             </button>
                             <button
-                              onClick={() => scrollToSection("program-studi")}
+                              onClick={() => navigate('/baak')}
                               className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                             >
                               BAAK
@@ -481,7 +481,7 @@
                           Mahasiswa
                         </button>
                         <button
-                          onClick={() => scrollToSection("akreditasi")}
+                          onClick={() => navigate('/akreditasi')}
                           className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                         >
                           Akreditasi
@@ -493,25 +493,25 @@
                           Kurikulum
                         </button>
                         <button
-                          onClick={() => scrollToSection("krs")}
+                          onClick={() => navigate('/krs')}
                           className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                         >
                           KRS
                         </button>
                         <button
-                          onClick={() => scrollToSection("khs")}
+                          onClick={() => navigate('/khs')}
                           className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                         >
                           KHS
                         </button>
                         <button
-                          onClick={() => scrollToSection("jadwal-matkul")}
+                          onClick={() => navigate('/jadwal-matkul')}
                           className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                         >
                           Jadwal Matkul
                         </button>
                         <button
-                          onClick={() => scrollToSection("kalender-akademik")}
+                          onClick={() => navigate('/kalender-akademik')}
                           className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                         >
                           Kalender Akademik

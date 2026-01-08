@@ -58,7 +58,7 @@ function Reason({ setLoading }: ReasonProps) {
 
   return (
    <section className="bg-yellow-400 py-12 md:py-20 px-4 md:px-20 relative overflow-hidden">
-  <div className="absolute w-[300px] h-[300px] md:w-[500px] md:h-[500px] lg:w-[700px] lg:h-[700px] bg-blue-900 rounded-full z-0 top-20 md:top-auto md:right-20 md:translate-y-10 left-1/2 md:left-auto -translate-x-1/2 md:translate-x-0"></div>
+  <div className="absolute w-[300px] h-[300px] md:w-[500px] md:h-[500px] lg:w-[700px] lg:h-[700px] bg-blue-900 rounded-full z-0 top-20 md:top-auto md:right-20 md:translate-y-10 md:translate-x-[-50px] left-1/2 md:left-auto -translate-x-1/2"></div>
   <div className="max-w-6xl mx-auto flex flex-col-reverse md:flex-row items-center justify-between gap-8 md:gap-12 relative z-10">
     <div className="w-full md:w-1/2 relative z-20">
       <div className="bg-white rounded-2xl p-6 md:p-8 lg:p-10 shadow-lg">

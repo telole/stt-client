@@ -95,7 +95,7 @@ const Anno = () => {
 
   return (
     <div className="flex flex-col lg:flex-row w-full min-h-[750px] py-8 md:py-12 lg:py-[68px] px-4 md:px-8 lg:px-[410px] gap-8 md:gap-12 lg:gap-[100px] justify-center items-center bg-[#f0cd02] relative mx-auto">
-      <div className="flex w-full lg:w-[580px] p-6 md:p-8 lg:p-[50px] flex-col gap-6 md:gap-8 lg:gap-[30px] items-start bg-white rounded-[20px] relative shadow-[6px_24px_54px_0_rgba(0,0,0,0.05)]">
+      <div className="flex w-full lg:w-[580px] min-h-0 p-6 md:p-8 lg:p-[50px] flex-col justify-between gap-6 md:gap-8 lg:gap-[30px] items-start bg-white rounded-[20px] relative shadow-[6px_24px_54px_0_rgba(0,0,0,0.05)]">
         <div className="flex w-full lg:w-[271px] flex-col gap-4 md:gap-5 items-start relative">
           <h2 className="text-2xl md:text-3xl lg:text-[36px] font-bold leading-tight lg:leading-[43.884px] text-black">
             Pengumuman

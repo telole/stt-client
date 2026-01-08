@@ -7,6 +7,8 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import NewsPage from './pages/News';
 import NewsDetail from './pages/NewsDetail';
 import Dosen from './pages/Dosen';
+import Curriculums from './pages/Curriculums';
+import Fallback from './pages/Fallback';
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
       <Route path='/berita' element={<NewsPage/>} />
       <Route path='/berita/:slug' element={<NewsDetail/>} />
       <Route path='/dosens' element={<Dosen/>} />
+      <Route path='/kurikulum' element={<Curriculums/>} />
+      <Route path='*' element={<Fallback/>} />
     </Routes>
     </BrowserRouter>
   );

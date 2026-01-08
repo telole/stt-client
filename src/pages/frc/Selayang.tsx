@@ -79,11 +79,6 @@ function Selayang({ setLoading }: SelayangProps) {
         </motion.div>
 
         <motion.div
-          // className="w-full md:w-1/2 relative flex justify-center md:justify-end items-center"
-          // initial={{ opacity: 0, x: 50 }}
-          // whileInView={{ opacity: 1, x: 0 }}
-          // viewport={{ once: true, amount: 0.3 }}
-          // transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <div className="absolute w-[300px] h-[300px] md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px] bg-yellow-400 rounded-full z-0 md:right-[-40px] md:translate-y-16"></div>
           <img

@@ -3,7 +3,7 @@
   import { useEffect, useState } from "react";
   import { useNavigate } from "react-router-dom";
   import { api } from "../../config/hooks";
-  import { Menu, X, ChevronDown } from "lucide-react";
+  import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
 
   interface NavItem {
     id: number;
@@ -16,8 +16,10 @@
     const navigate = useNavigate();
     const [menu, setMenu] = useState<NavItem[]>([]);
     const [isOpen, setIsOpen] = useState(false);
+    const [isProfilOpen, setIsProfilOpen] = useState(false);
     const [isAkademikOpen, setIsAkademikOpen] = useState(false);
     const [isProdiOpen, setIsProdiOpen] = useState(false);
+    const [isProdiSubOpen, setIsProdiSubOpen] = useState(false);
 
     useEffect(() => {
       const axios = api();
@@ -41,9 +43,17 @@
     }, []);
 
     const toggleMenu = () => setIsOpen(!isOpen);
+    const toggleProfil = () => {
+      setIsProfilOpen((prev) => !prev);
+      setIsAkademikOpen(false);
+      setIsProdiOpen(false);
+      setIsProdiSubOpen(false);
+    };
     const toggleAkademik = () => {
       setIsAkademikOpen((prev) => !prev);
+      setIsProfilOpen(false);
       setIsProdiOpen(false);
+      setIsProdiSubOpen(false);
     };
     const toggleProdi = () => setIsProdiOpen((prev) => !prev);
 
@@ -68,12 +78,17 @@
       }
       
       setIsOpen(false);
+      setIsProfilOpen(false);
       setIsAkademikOpen(false);
       setIsProdiOpen(false);
     };
 
     function HandleRedirect(path: string) { 
-      window.location.href = 'https://pmb.sttp.ac.id/';
+      if (path && path.startsWith('http')) {
+        window.location.href = path;
+      } else {
+        window.location.href = 'https://pmb.sttp.ac.id/';
+      }
     }
 
     return (
@@ -92,7 +107,48 @@
 
             <div className="hidden lg:flex items-center space-x-6">
               {menu.map((item, index) =>
-                item.label !== "Akademik" ? (
+                item.label === "Profil" ? (
+                  <div key={item.id} className="relative">
+                    <button
+                      onClick={toggleProfil}
+                      className="text-white hover:text-yellow-300 transition-colors duration-300 flex items-center gap-1"
+                    >
+                      Profil
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-300 ${
+                          isProfilOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+
+                    <div
+                      className={`absolute top-full mt-2 bg-white rounded shadow-lg py-2 z-50 min-w-[180px] transition-all duration-300 origin-top ${
+                        isProfilOpen
+                          ? "opacity-100 visible transform scale-100 translate-y-0"
+                          : "opacity-0 invisible transform scale-95 -translate-y-2"
+                      }`}
+                    >
+                      <button
+                        onClick={() => scrollToSection("kata-sambutan")}
+                        className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                      >
+                        Kata sambutan
+                      </button>
+                      <button
+                        onClick={() => scrollToSection("visi-misi")}
+                        className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                      >
+                        Visi Misi
+                      </button>
+                      <button
+                        onClick={() => scrollToSection("ulasan-singkat")}
+                        className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                      >
+                        Ulasan Singkat
+                      </button>
+                    </div>
+                  </div>
+                ) : item.label !== "Akademik" && item.label !== "Prodi" ? (
                   <button
                     key={item.id}
                     onClick={() => scrollToSection(item.Path)}
@@ -100,7 +156,7 @@
                   >
                     {item.label}
                   </button>
-                ) : (
+                ) : item.label === "Akademik" ? (
                   <div key={item.id} className="relative">
                     <button
                       onClick={toggleAkademik}
@@ -115,57 +171,127 @@
                     </button>
 
                     <div
-                      className={`absolute top-full mt-2 bg-white rounded shadow-lg py-2 w-40 z-50 transition-all duration-300 origin-top ${
+                      className={`absolute top-full mt-2 bg-white rounded shadow-lg py-2 z-50 min-w-[240px] transition-all duration-300 origin-top ${
                         isAkademikOpen
                           ? "opacity-100 visible transform scale-100 translate-y-0"
                           : "opacity-0 invisible transform scale-95 -translate-y-2"
                       }`}
+                      onMouseEnter={() => {
+                        // Biarkan sub-menu terbuka jika sudah terbuka
+                      }}
+                      onMouseLeave={() => setIsProdiSubOpen(false)}
                     >
-                      <button
-                        onClick={() => scrollToSection("program-studi")}
-                        className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                      >
-                        Detail
-                      </button>
-                      <button
-                        onClick={toggleProdi}
-                        className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200 flex items-center justify-between"
-                      >
-                        Prodi
-                        <ChevronDown
-                          className={`w-3 h-3 transition-transform duration-300 ${
-                            isProdiOpen ? "rotate-180" : ""
-                          }`}
-                        />
-                      </button>
-
-                      <div
-                        className={`ml-4 mt-1 border-l border-gray-300 pl-2 transition-all duration-300 overflow-hidden ${
-                          isProdiOpen ? "opacity-100 max-h-40" : "opacity-0 max-h-0"
-                        }`}
-                      >
-                        <button
-                          onClick={() => scrollToSection("program-studi")}
-                          className="block w-full text-left px-2 py-1 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                      <div className="relative flex">
+                        {/* Menu utama Akademik */}
+                        <div 
+                          className="flex flex-col"
+                          onMouseEnter={() => {
+                            // Jaga sub-menu tetap terbuka jika mouse masih di area menu utama
+                            // Sub-menu hanya tertutup oleh onMouseLeave dari dropdown utama
+                          }}
                         >
-                          S1 Manajemen
-                        </button>
-                        <button
-                          onClick={() => scrollToSection("program-studi")}
-                          className="block w-full text-left px-2 py-1 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                        >
-                          S1 Informatika
-                        </button>
-                        <button
-                          onClick={() => scrollToSection("program-studi")}
-                          className="block w-full text-left px-2 py-1 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                        >
-                          S1 Elektro
-                        </button>
+                          <div
+                            onMouseEnter={() => setIsProdiSubOpen(true)}
+                            className="relative"
+                          >
+                            <button
+                              className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200 flex items-center justify-between group"
+                            >
+                              <span>Prodi</span>
+                              <ChevronRight className="w-4 h-4" />
+                            </button>
+                            {/* Sub-menu Prodi (muncul di kanan) - dipindah ke sini agar lebih dekat dengan button Prodi */}
+                            {isProdiSubOpen && (
+                              <div
+                                className="absolute left-full top-0 ml-1 bg-white rounded shadow-lg py-2 min-w-[180px] border-l border-gray-200 z-50"
+                                onMouseEnter={() => setIsProdiSubOpen(true)}
+                              >
+                                <button
+                                  onClick={() => scrollToSection("program-studi")}
+                                  className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                                >
+                                  Informatika
+                                </button>
+                                <button
+                                  onClick={() => scrollToSection("program-studi")}
+                                  className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                                >
+                                  Elektro
+                                </button>
+                                <button
+                                  onClick={() => scrollToSection("program-studi")}
+                                  className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                                >
+                                  Manajemen
+                                </button>
+                                <button
+                                  onClick={() => scrollToSection("program-studi")}
+                                  className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                                >
+                                  Caldik
+                                </button>
+                                <button
+                                  onClick={() => scrollToSection("program-studi")}
+                                  className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                                >
+                                  BAAK
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => navigate('/dosens')}
+                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                          >
+                            Dosen
+                          </button>
+                          <button
+                            onClick={() => scrollToSection("mahasiswa")}
+                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                          >
+                            Mahasiswa
+                          </button>
+                          <button
+                            onClick={() => scrollToSection("akreditasi")}
+                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                          >
+                            Akreditasi
+                          </button>
+                          <button
+                            onClick={() => navigate('/kurikulum')}
+                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                          >
+                            Kurikulum
+                          </button>
+                          <button
+                            onClick={() => scrollToSection("krs")}
+                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                          >
+                            KRS
+                          </button>
+                          <button
+                            onClick={() => scrollToSection("khs")}
+                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                          >
+                            KHS
+                          </button>
+                          <button
+                            onClick={() => scrollToSection("jadwal-matkul")}
+                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                          >
+                            Jadwal Matkul
+                          </button>
+                          <button
+                            onClick={() => scrollToSection("kalender-akademik")}
+                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                          >
+                            Kalender Akademik
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                )
+                ) : null
               )}
 
               <button
@@ -208,7 +334,54 @@
           >
             <div className="space-y-3 bg-[#013D7B] rounded-md p-4">
               {menu.map((item, index) =>
-                item.label !== "Akademik" ? (
+                item.label === "Profil" ? (
+                  <div
+                    key={item.id}
+                    className={`transform transition-all duration-300 ${
+                      isOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
+                    }`}
+                    style={{ transitionDelay: `${index * 100}ms` }}
+                  >
+                    <button
+                      onClick={toggleProfil}
+                      className="w-full text-left text-white hover:text-yellow-300 flex items-center justify-between transition-colors duration-300"
+                    >
+                      Profil
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-300 ${
+                          isProfilOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+
+                    <div
+                      className={`overflow-hidden transition-all duration-400 ${
+                        isProfilOpen ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
+                      }`}
+                    >
+                      <div className="space-y-2 ml-2">
+                        <button
+                          onClick={() => scrollToSection("kata-sambutan")}
+                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                        >
+                          Kata sambutan
+                        </button>
+                        <button
+                          onClick={() => scrollToSection("visi-misi")}
+                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                        >
+                          Visi Misi
+                        </button>
+                        <button
+                          onClick={() => scrollToSection("ulasan-singkat")}
+                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                        >
+                          Ulasan Singkat
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : item.label !== "Akademik" ? (
                   <button
                     key={item.id}
                     onClick={() => scrollToSection(item.Path)}
@@ -246,12 +419,6 @@
                     >
                       <div className="space-y-2 ml-2">
                         <button
-                          onClick={() => scrollToSection("program-studi")}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          Detail
-                        </button>
-                        <button
                           onClick={toggleProdi}
                           className="w-full text-left text-white hover:text-yellow-300 flex items-center justify-between transition-colors duration-300"
                         >
@@ -265,30 +432,90 @@
 
                         <div
                           className={`ml-4 overflow-hidden transition-all duration-300 ${
-                            isProdiOpen ? "max-h-32 opacity-100" : "max-h-0 opacity-0"
+                            isProdiOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
                           }`}
                         >
                           <div className="space-y-1">
                             <button
-                              onClick={() => scrollToSection("prodi-management")}
+                              onClick={() => scrollToSection("program-studi")}
                               className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                             >
-                              S1 Manajemen
+                              Informatika
                             </button>
                             <button
-                              onClick={() => scrollToSection("prodi-informatika")}
+                              onClick={() => scrollToSection("program-studi")}
                               className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                             >
-                              S1 Informatika
+                              Elektro
                             </button>
                             <button
-                              onClick={() => scrollToSection("prodi-elektro")}
+                              onClick={() => scrollToSection("program-studi")}
                               className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
                             >
-                              S1 Elektro
+                              Manajemen
+                            </button>
+                            <button
+                              onClick={() => scrollToSection("program-studi")}
+                              className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                            >
+                              Caldik
+                            </button>
+                            <button
+                              onClick={() => scrollToSection("program-studi")}
+                              className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                            >
+                              BAAK
                             </button>
                           </div>
                         </div>
+                        <button
+                          onClick={() => navigate('/dosens')}
+                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                        >
+                          Dosen
+                        </button>
+                        <button
+                          onClick={() => scrollToSection("mahasiswa")}
+                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                        >
+                          Mahasiswa
+                        </button>
+                        <button
+                          onClick={() => scrollToSection("akreditasi")}
+                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                        >
+                          Akreditasi
+                        </button>
+                        <button
+                          onClick={() => navigate('/kurikulum')}
+                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                        >
+                          Kurikulum
+                        </button>
+                        <button
+                          onClick={() => scrollToSection("krs")}
+                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                        >
+                          KRS
+                        </button>
+                        <button
+                          onClick={() => scrollToSection("khs")}
+                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                        >
+                          KHS
+                        </button>
+                        <button
+                          onClick={() => scrollToSection("jadwal-matkul")}
+                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                        >
+                          Jadwal Matkul
+                        </button>
+                        <button
+                          onClick={() => scrollToSection("kalender-akademik")}
+                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                        >
+                          Kalender Akademik
+                        </button>
                       </div>
                     </div>
                   </div>

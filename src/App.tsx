@@ -9,6 +9,7 @@ import NewsDetail from './pages/NewsDetail';
 import Dosen from './pages/Dosen';
 import Curriculums from './pages/Curriculums';
 import Akreditasi from './pages/Akreditasi';
+import AnnoucementSchedule from './pages/AnnoucementSchedule';
 import Fallback from './pages/Fallback';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
       <Route path='/dosens' element={<Dosen/>} />
       <Route path='/kurikulum' element={<Curriculums/>} />
       <Route path='/akreditasi' element={<Akreditasi/>} />
+      <Route path='/pengumuman-jadwal-kegiatan' element={<AnnoucementSchedule/>} />
       <Route path='*' element={<Fallback/>} />
     </Routes>
     </BrowserRouter>

@@ -16,9 +16,7 @@ export default function Fallback() {
 
     return (
         <>
-            <Navbar />
             <div className="w-full min-h-screen bg-white relative overflow-hidden mx-auto flex items-center justify-center px-4 py-20 pt-32">
-                {/* Floating Particles Background */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     {[...Array(20)].map((_, i) => (
                         <div
@@ -42,9 +40,6 @@ export default function Fallback() {
                             className={`w-[142px] h-[192px] bg-center bg-cover bg-no-repeat relative z-30 transition-all duration-1000 ${
                                 isAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                             }`}
-                            style={{
-                                backgroundImage: 'url(https://codia-f2c.s3.us-west-1.amazonaws.com/image/2026-01-08/h3q4Gq6yvz.png)'
-                            }}
                         />
                         <span 
                             className={`absolute inset-0 flex items-center justify-center text-[200px] md:text-[300px] lg:text-[400px] font-black leading-[480px] text-center whitespace-nowrap z-20 transition-all duration-1000 ${

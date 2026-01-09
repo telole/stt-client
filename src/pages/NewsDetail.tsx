@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api, getImageBaseURL } from '../config/hooks';
 import Navbar from './composable/Navbar';
 import Footer from './composable/Footer';
+import LoadingSpinner from '../setLoading/SetLoading';
 
 interface Author {
   name: string;
@@ -45,14 +46,30 @@ const NewsDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [berita, setBerita] = useState<BeritaDetail | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const loadingCountRef = useRef(0);
+
+  const handleLoading = useCallback((loading: boolean) => {
+    if (loading) {
+      loadingCountRef.current += 1;
+      setIsLoading(true);
+    } else {
+      loadingCountRef.current = Math.max(0, loadingCountRef.current - 1);
+      setTimeout(() => {
+        if (loadingCountRef.current === 0) {
+          setIsLoading(false);
+        }
+      }, 50);
+    }
+  }, []);
 
   useEffect(() => {
     if (!slug) {
-      setLoading(false);
+      handleLoading(false);
       return;
     }
 
+    handleLoading(true);
     const axios = api();
     const query = `beritas?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=Cover`;
     
@@ -63,13 +80,23 @@ const NewsDetail = () => {
         if (data) {
           setBerita(data);
         }
-        setLoading(false);
+        handleLoading(false);
       })
       .catch((err) => {
         console.error('Error fetching berita detail:', err);
-        setLoading(false);
+        handleLoading(false);
       });
-  }, [slug]);
+  }, [slug, handleLoading]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        setIsLoading(false);
+      }
+    }, 10000);
+
+    return () => clearTimeout(timeout);
+  }, [isLoading]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -142,21 +169,7 @@ const NewsDetail = () => {
     return elements;
   };
 
-  if (loading) {
-    return (
-      <>
-        <Navbar />
-        <div className="min-h-screen bg-[#e4f6ff] flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#013d7b] mx-auto"></div>
-            <p className="mt-4 text-[#013d7b]">Memuat berita...</p>
-          </div>
-                </div>
-      </>
-    );
-  }
-
-  if (!berita) {
+  if (!berita && !isLoading) {
     return (
       <>
         <Navbar />
@@ -175,9 +188,20 @@ const NewsDetail = () => {
     );
   }
 
+  if (!berita) {
+    return null;
+  }
+
   return (
     <>
       <Navbar />
+      
+      {isLoading && (
+        <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      )}
+
       <div className="min-h-screen bg-white pt-20 sm:pt-24 pb-12 sm:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
           {/* Back Button */}

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, getImageBaseURL } from "../config/hooks";
 import Navbar from "./composable/Navbar";
 import Footer from "./composable/Footer";
+import LoadingSpinner from "../setLoading/SetLoading";
 
 interface Author {
   name: string;
@@ -28,22 +29,48 @@ interface BeritaData {
 export default function News() {
   const navigate = useNavigate();
   const [beritaList, setBeritaList] = useState<BeritaData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const loadingCountRef = useRef(0);
+
+  const handleLoading = useCallback((loading: boolean) => {
+    if (loading) {
+      loadingCountRef.current += 1;
+      setIsLoading(true);
+    } else {
+      loadingCountRef.current = Math.max(0, loadingCountRef.current - 1);
+      setTimeout(() => {
+        if (loadingCountRef.current === 0) {
+          setIsLoading(false);
+        }
+      }, 50);
+    }
+  }, []);
 
   useEffect(() => {
+    handleLoading(true);
     const axios = api();
     axios
       .get('beritas?populate=Cover&sort=createdAt:desc')
       .then((res) => {
         const data = res.data?.data || [];
         setBeritaList(data);
-        setLoading(false);
+        handleLoading(false);
       })
       .catch((err) => {
         console.error('Error fetching berita:', err);
-        setLoading(false);
+        handleLoading(false);
       });
-  }, []);
+  }, [handleLoading]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        setIsLoading(false);
+      }
+    }, 10000);
+
+    return () => clearTimeout(timeout);
+  }, [isLoading]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -64,24 +91,16 @@ export default function News() {
       : "/default.jpg";
   };
 
-  if (loading) {
-    return (
-      <>
-        <Navbar />
-        <div className="min-h-screen bg-[#e4f6ff] flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#013d7b] mx-auto"></div>
-            <p className="mt-4 text-[#013d7b]">Memuat berita...</p>
-          </div>
-        </div>
-      </>
-    );
-  }
-
   return (
     <>
       <Navbar />
       
+      {isLoading && (
+        <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      )}
+
       {/* Banner Section */}
       <div className="relative w-full h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] flex items-center justify-center overflow-hidden">
         <div 

@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { api, getImageBaseURL } from '../config/hooks';
 import Navbar from './composable/Navbar';
 import { X } from 'lucide-react';
 import Footer from './composable/Footer';
+import LoadingSpinner from '../setLoading/SetLoading';
 
 interface FotoData {
   id: number;
@@ -39,40 +40,61 @@ interface DosenData {
 
 const Dosen = () => {
   const [dosenList, setDosenList] = useState<DosenData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const loadingCountRef = useRef(0);
   const [selectedDosen, setSelectedDosen] = useState<DosenData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleLoading = useCallback((loading: boolean) => {
+    if (loading) {
+      loadingCountRef.current += 1;
+      setIsLoading(true);
+    } else {
+      loadingCountRef.current = Math.max(0, loadingCountRef.current - 1);
+      setTimeout(() => {
+        if (loadingCountRef.current === 0) {
+          setIsLoading(false);
+        }
+      }, 50);
+    }
+  }, []);
+
   useEffect(() => {
+    handleLoading(true);
     const axios = api();
     axios
       .get('dosens?populate=*')
       .then((res) => {
         const data = res.data?.data || [];
         setDosenList(data);
-        setLoading(false);
+        handleLoading(false);
       })
       .catch((err) => {
         console.error('Error fetching dosen:', err);
-        setLoading(false);
+        handleLoading(false);
       });
-  }, []);
+  }, [handleLoading]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#e4f6ff] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#013d7b] mx-auto"></div>
-          <p className="mt-4 text-[#013d7b]">Memuat data dosen...</p>
-            </div>
-          </div>
-    );
-  }
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        setIsLoading(false);
+      }
+    }, 10000);
+
+    return () => clearTimeout(timeout);
+  }, [isLoading]);
 
   return (
     <div className="min-h-screen bg-[#e4f6ff]">
       <Navbar />
       
+      {isLoading && (
+        <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      )}
+
       <div className="relative pt-32 pb-20 px-4">
         <div className="absolute inset-0 bg-black/40 bg-cover bg-center shadow-lg brightness-50" 
              style={{

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, getImageBaseURL } from '../config/hooks';
 import Navbar from './composable/Navbar';
 import Footer from './composable/Footer';
+import LoadingSpinner from '../setLoading/SetLoading';
 
 interface KurikulumData {
   id: number;
@@ -27,9 +28,25 @@ interface KurikulumData {
 export default function Curriculums() {
   const navigate = useNavigate();
   const [kurikulum, setKurikulum] = useState<KurikulumData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const loadingCountRef = useRef(0);
+
+  const handleLoading = useCallback((loading: boolean) => {
+    if (loading) {
+      loadingCountRef.current += 1;
+      setIsLoading(true);
+    } else {
+      loadingCountRef.current = Math.max(0, loadingCountRef.current - 1);
+      setTimeout(() => {
+        if (loadingCountRef.current === 0) {
+          setIsLoading(false);
+        }
+      }, 50);
+    }
+  }, []);
 
   useEffect(() => {
+    handleLoading(true);
     const axios = api();
     axios
       .get('kurikulums?populate=*')
@@ -47,13 +64,23 @@ export default function Curriculums() {
             publishedAt: data.publishedAt,
           });
         }
-        setLoading(false);
+        handleLoading(false);
       })
       .catch((err) => {
         console.error('Error fetching kurikulum:', err);
-        setLoading(false);
+        handleLoading(false);
       });
-  }, []);
+  }, [handleLoading]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        setIsLoading(false);
+      }
+    }, 10000);
+
+    return () => clearTimeout(timeout);
+  }, [isLoading]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -87,19 +114,6 @@ export default function Curriculums() {
     ));
   };
 
-  if (loading) {
-    return (
-      <>
-        <Navbar />
-        <div className="min-h-screen bg-white flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#013d7b] mx-auto"></div>
-            <p className="mt-4 text-[#013d7b]">Memuat data kurikulum...</p>
-          </div>
-        </div>
-      </>
-    );
-  }
 
   if (!kurikulum) {
     return (
@@ -116,6 +130,12 @@ export default function Curriculums() {
     <>
       <Navbar />
       
+      {isLoading && (
+        <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      )}
+
       <div className="relative pt-32 pb-20 px-4">
         <div className="absolute inset-0 bg-black/40 bg-cover bg-center shadow-lg brightness-50" 
              style={{

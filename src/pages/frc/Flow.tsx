@@ -10,12 +10,23 @@ interface Step {
   Posisi: string;
 }
 
+interface LinkData {
+  id: number;
+  documentId: string;
+  Title: string;
+  Url: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
 interface FlowProps {
   setLoading: (value: boolean) => void;
 }
 
 function Flow({ setLoading }: FlowProps) {
   const [steps, setSteps] = useState<Step[]>([]);
+  const [links, setLinks] = useState<LinkData[]>([]);
   const axiosInstance = api();
 
   useEffect(() => {
@@ -29,6 +40,16 @@ function Flow({ setLoading }: FlowProps) {
       })
       .catch((err) => console.error("Fetch error:", err))
       .finally(() => setLoading(false));
+
+    // Fetch links
+    axiosInstance
+      .get("links")
+      .then((res) => {
+        const data = res.data?.data || [];
+        setLinks(data);
+      })
+      .catch((err) => console.error("Fetch links error:", err));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function HandleRedirect(path: string) { 
@@ -64,9 +85,22 @@ function Flow({ setLoading }: FlowProps) {
                 <h3 className="text-blue-900 font-bold text-lg mb-2">{step.Title}</h3>
                 <p className="text-sm text-gray-700 mb-4 leading-relaxed">{step.Deskripsi}</p>
                 {step.Urutan === 1 && (
-                  <button onClick={() => HandleRedirect("https://pmb.sttp.ac.id/")} className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded transition-all text-sm">
-                    Daftar Sekarang
-                  </button>
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <button onClick={() => HandleRedirect("https://pmb.sttp.ac.id/")} className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded transition-all text-sm">
+                      Daftar Sekarang
+                    </button>
+                    {links.length > 0 && links.map((link) => (
+                      <a
+                        key={link.id}
+                        href={link.Url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-blue-900 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded transition-all text-sm"
+                      >
+                        Download Brosur
+                      </a>
+                    ))}
+                  </div>
                 )}
                 {step.Urutan === 5 && (
                   <div className="bg-blue-900 text-white px-6 py-4 rounded-lg">
@@ -95,11 +129,24 @@ function Flow({ setLoading }: FlowProps) {
                 <div className="absolute right-0 top-4 w-10 h-1 bg-yellow-400"></div>
                 <h3 className="text-blue-900 font-bold text-lg mb-2">{steps[0].Title}</h3>
                 <p className="text-sm text-gray-700 mb-4 leading-relaxed">{steps[0].Deskripsi}</p>
-                <button 
-                onClick={() => HandleRedirect("https://pmb.sttp.ac.id/")}
-                 className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded transition-all text-sm">
-                  Daftar Sekarang
-                </button>
+                <div className="flex flex-wrap gap-2 items-center">
+                  <button 
+                    onClick={() => HandleRedirect("https://pmb.sttp.ac.id/")}
+                    className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded transition-all text-sm">
+                    Daftar Sekarang
+                  </button>
+                  {links.length > 0 && links.map((link) => (
+                    <a
+                      key={link.id}
+                      href={link.Url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-900 hover:bg-blue-800 text-white font-semibold px-4 py-2 rounded transition-all text-sm"
+                    >
+                      Download Brosur
+                    </a>
+                  ))}
+                </div>
               </div>
               <div className="relative z-10 w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center font-bold text-blue-900 text-xl">
                 {steps[0].Urutan}

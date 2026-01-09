@@ -14,6 +14,9 @@ interface ContentNode {
   type: string;
   children?: ContentNode[];
   text?: string;
+  url?: string;
+  bold?: boolean;
+  italic?: boolean;
 }
 
 interface BeritaDetail {
@@ -120,7 +123,6 @@ const NewsDetail = () => {
   const getImageUrl = (berita: BeritaDetail): string => {
     const imageBaseURL = getImageBaseURL();
     
-    // Try Cover first (array) - same as News.tsx
     if (berita?.Cover?.[0]?.formats?.medium?.url) {
       return `${imageBaseURL}${berita.Cover[0].formats.medium.url}`;
     }
@@ -131,7 +133,6 @@ const NewsDetail = () => {
       return `${imageBaseURL}${berita.Cover[0].url}`;
     }
     
-    // Fallback to Image (single object)
     if (berita?.Image?.formats?.large?.url) {
       return `${imageBaseURL}${berita.Image.formats.large.url}`;
     }
@@ -145,28 +146,118 @@ const NewsDetail = () => {
     return '';
   };
 
+  const renderTextWithLinks = (text: string): React.ReactNode[] => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
+    let key = 0;
+
+    while ((match = urlRegex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      
+      const url = match[0];
+      parts.push(
+        <a
+          key={key++}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline"
+        >
+          {url}
+        </a>
+      );
+      
+      lastIndex = match.index + match[0].length;
+    }
+    
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    
+    return parts.length > 0 ? parts : [text];
+  };
+
+  const renderNode = (node: ContentNode, key: number | string): React.ReactNode => {
+    if (node.type === 'text') {
+      let content: React.ReactNode = node.text || '';
+      
+      if (node.bold && node.italic) {
+        content = <strong><em>{content}</em></strong>;
+      } else if (node.bold) {
+        content = <strong>{content}</strong>;
+      } else if (node.italic) {
+        content = <em>{content}</em>;
+      }
+      
+      return <span key={key}>{content}</span>;
+    }
+    
+    if (node.type === 'link' && node.url) {
+      const linkChildren = node.children && node.children.length > 0
+        ? node.children.map((child, idx) => renderNode(child, idx))
+        : [node.url];
+      return (
+        <a
+          key={key}
+          href={node.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline"
+        >
+          {linkChildren}
+        </a>
+      );
+    }
+    
+    if (node.children) {
+      return node.children.map((child, idx) => renderNode(child, `${key}-${idx}`));
+    }
+    
+    return null;
+  };
+
   const renderContent = (content: ContentNode[]): React.ReactElement[] => {
     const elements: React.ReactElement[] = [];
     
     content.forEach((node, index) => {
       if (node.type === 'paragraph') {
-        const text = node.children?.map(child => child.text || '').join('') || '';
-        if (!text.trim()) {
+        const hasContent = node.children?.some(child => {
+          if (child.type === 'text' && child.text?.trim()) return true;
+          if (child.type === 'link') return true;
+          return false;
+        });
+        
+        if (!hasContent) {
           elements.push(<br key={index} />);
           return;
         }
         
-        // Check if text looks like a heading (short, bold-like, or contains keywords)
-        if (text.length < 100 && (text.includes('Peran') || text.includes('Era') || text.includes('Industri'))) {
+        const paragraphContent = node.children?.map((child, idx) => {
+          const uniqueKey = `${index}-${idx}`;
+          return renderNode(child, uniqueKey as any);
+        }) || [];
+        const textContent = node.children?.map(child => {
+          if (child.type === 'text') return child.text || '';
+          if (child.type === 'link' && child.children) {
+            return child.children.map(c => c.text || '').join('');
+          }
+          return '';
+        }).join('') || '';
+        
+        if (textContent.length < 100 && (textContent.includes('Peran') || textContent.includes('Era') || textContent.includes('Industri'))) {
           elements.push(
             <h2 key={index} className="text-lg sm:text-xl font-bold text-black mb-3 sm:mb-4 mt-4 sm:mt-6">
-              {text}
+              {paragraphContent}
             </h2>
           );
         } else {
           elements.push(
             <p key={index} className="mb-3 sm:mb-4 text-sm sm:text-base leading-relaxed text-justify">
-              {text}
+              {paragraphContent}
             </p>
           );
         }
@@ -211,7 +302,6 @@ const NewsDetail = () => {
 
       <div className="min-h-screen bg-white pt-20 sm:pt-24 pb-12 sm:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
-          {/* Back Button */}
           <div 
             className="flex items-center gap-2 mb-4 sm:mb-6 cursor-pointer hover:opacity-70 transition-opacity"
             onClick={() => navigate('/berita')}
@@ -222,17 +312,15 @@ const NewsDetail = () => {
             <span className="text-sm sm:text-base font-normal text-black/50">Kembali</span>
             </div>
             
-          {/* Article Header */}
           <div className="mb-4 sm:mb-6" data-aos="fade-up">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-2 sm:mb-3 leading-tight">
-              {berita.Title}
+              {renderTextWithLinks(berita.Title)}
             </h1>
             <p className="text-sm sm:text-base font-normal text-[#206fa0]">
               {formatDate(berita.publishedAt)}
             </p>
           </div>
 
-          {/* Article Image */}
           {getImageUrl(berita) && (
             <div className="mb-6 sm:mb-8" data-aos="fade-up" data-aos-delay="100">
               <img
@@ -244,7 +332,6 @@ const NewsDetail = () => {
             </div>
           )}
 
-          {/* Article Content */}
           {berita.Content && berita.Content.length > 0 && (
             <div className="max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="200">
               <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">

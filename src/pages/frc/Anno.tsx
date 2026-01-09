@@ -38,6 +38,41 @@ const Anno = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
 
+  const renderTextWithLinks = (text: string): React.ReactNode[] => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
+    let key = 0;
+
+    while ((match = urlRegex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      
+      const url = match[0];
+      parts.push(
+        <a
+          key={key++}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline"
+        >
+          {url}
+        </a>
+      );
+      
+      lastIndex = match.index + match[0].length;
+    }
+    
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    
+    return parts.length > 0 ? parts : [text];
+  };
+
   useEffect(() => {
     const axios = api();
     
@@ -118,7 +153,7 @@ const Anno = () => {
               <React.Fragment key={index}>
                 <div className="flex w-full lg:w-[480px] flex-col gap-2 md:gap-[10px] items-start relative">
                   <h3 className="flex w-full lg:w-[480px] min-w-0 justify-start items-start text-base md:text-lg lg:text-xl font-medium leading-snug lg:leading-[24.38px] text-black">
-                    {announcement.title}
+                    {renderTextWithLinks(announcement.title)}
                   </h3>
                   <p className="min-w-0 self-stretch text-sm md:text-base font-normal leading-[19.504px] text-[#206fa0] whitespace-normal lg:whitespace-nowrap">
                     {announcement.date}
@@ -181,7 +216,7 @@ const Anno = () => {
                   </div>
                   <div className="flex min-w-0 flex-1 lg:flex-grow p-3 md:p-5 lg:p-5 gap-[10px] justify-center items-center">
                     <span className="flex w-full lg:w-[365px] justify-start items-start text-sm md:text-base lg:text-xl font-medium leading-snug lg:leading-[24.38px] text-black">
-                      {event.title}
+                      {renderTextWithLinks(event.title)}
                     </span>
                   </div>
                 </div>

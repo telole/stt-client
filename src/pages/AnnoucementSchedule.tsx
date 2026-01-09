@@ -40,6 +40,75 @@ const AnnoucementSchedule = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const loadingCountRef = useRef(0);
+  const [expandedAnnouncements, setExpandedAnnouncements] = useState<Set<number>>(new Set());
+  const [expandedEvents, setExpandedEvents] = useState<Set<number>>(new Set());
+
+  const truncateText = (text: string, maxWords: number = 20): string => {
+    const words = text.split(' ');
+    if (words.length <= maxWords) {
+      return text;
+    }
+    return words.slice(0, maxWords).join(' ');
+  };
+
+  const toggleAnnouncement = (index: number) => {
+    setExpandedAnnouncements(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleEvent = (index: number) => {
+    setExpandedEvents(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
+
+  const renderTextWithLinks = (text: string): React.ReactNode[] => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
+    let key = 0;
+
+    while ((match = urlRegex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      
+      const url = match[0];
+      parts.push(
+        <a
+          key={key++}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline"
+        >
+          {url}
+        </a>
+      );
+      
+      lastIndex = match.index + match[0].length;
+    }
+    
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    
+    return parts.length > 0 ? parts : [text];
+  };
 
   const handleLoading = useCallback((loading: boolean) => {
     if (loading) {
@@ -59,7 +128,6 @@ const AnnoucementSchedule = () => {
     handleLoading(true);
     const axios = api();
 
-    // Fetch all announcements without pagination
     axios
       .get('pengumumen?sort=publishedAt:desc')
       .then((res) => {
@@ -178,21 +246,35 @@ const AnnoucementSchedule = () => {
 
               <div className="flex w-full lg:w-[480px] flex-col gap-4 md:gap-5 items-start">
                 {announcements.length > 0 ? (
-                  announcements.map((announcement, index) => (
-                    <React.Fragment key={index}>
-                      <div className="flex w-full lg:w-[480px] flex-col gap-2 md:gap-[10px] items-start">
-                        <h3 className="flex w-full lg:w-[480px] min-w-0 justify-start items-start text-base md:text-lg lg:text-xl font-medium leading-snug lg:leading-[24.38px] text-black">
-                          {announcement.title}
-                        </h3>
-                        <p className="min-w-0 self-stretch text-sm md:text-base font-normal leading-[19.504px] text-[#206fa0] whitespace-normal lg:whitespace-nowrap">
-                          {announcement.date}
-                        </p>
-                      </div>
-                      {index < announcements.length - 1 && (
-                        <div className="w-full lg:w-[480px] h-px bg-[#d9d9d9]"></div>
-                      )}
-                    </React.Fragment>
-                  ))
+                  announcements.map((announcement, index) => {
+                    const words = announcement.title.split(' ');
+                    const isLongText = words.length > 20;
+                    const isExpanded = expandedAnnouncements.has(index);
+                    const displayText = isExpanded || !isLongText 
+                      ? announcement.title 
+                      : truncateText(announcement.title, 20);
+
+                    return (
+                      <React.Fragment key={index}>
+                        <div className="flex w-full lg:w-[480px] flex-col gap-2 md:gap-[10px] items-start">
+                          <h3 className="flex w-full lg:w-[480px] min-w-0 justify-start items-start text-base md:text-lg lg:text-xl font-medium leading-snug lg:leading-[24.38px] text-black">
+                            {renderTextWithLinks(displayText)}
+                            {isLongText && (
+                              <span className="text-[#206fa0] cursor-pointer hover:underline ml-1" onClick={() => toggleAnnouncement(index)}>
+                                {isExpanded ? ' ...tutup' : ' ...selengkapnya'}
+                              </span>
+                            )}
+                          </h3>
+                          <p className="min-w-0 self-stretch text-sm md:text-base font-normal leading-[19.504px] text-[#206fa0] whitespace-normal lg:whitespace-nowrap">
+                            {announcement.date}
+                          </p>
+                        </div>
+                        {index < announcements.length - 1 && (
+                          <div className="w-full lg:w-[480px] h-px bg-[#d9d9d9]"></div>
+                        )}
+                      </React.Fragment>
+                    );
+                  })
                 ) : (
                   <p className="text-gray-500 text-sm">Tidak ada pengumuman</p>
                 )}
@@ -210,29 +292,43 @@ const AnnoucementSchedule = () => {
               <div className="flex w-full lg:w-[480px] flex-col items-start">
                 {events.length > 0 ? (
                   <div className="w-full border border-black/50 overflow-hidden">
-                    {events.map((event, index) => (
-                      <div
-                        key={index}
-                        className={`flex w-full items-start ${
-                          index < events.length - 1 ? 'border-b border-black/50' : ''
-                        }`}
-                      >
-                        <div className="flex w-16 md:w-[75px] lg:w-[75px] p-3 md:p-5 lg:p-5 flex-col gap-2 md:gap-[10px] justify-center items-center flex-shrink-0 border-r border-black/50">
-                          <span className="flex w-[35px] h-[60px] justify-start items-start self-stretch flex-shrink-0 text-xs md:text-sm lg:text-base font-normal leading-tight lg:leading-[19.504px] text-[#206fa0] text-left">
-                            {event.date}
-                            <br />
-                            {event.month}
-                            <br />
-                            {event.year}
-                          </span>
+                    {events.map((event, index) => {
+                      const words = event.title.split(' ');
+                      const isLongText = words.length > 20;
+                      const isExpanded = expandedEvents.has(index);
+                      const displayText = isExpanded || !isLongText 
+                        ? event.title 
+                        : truncateText(event.title, 20);
+
+                      return (
+                        <div
+                          key={index}
+                          className={`flex w-full items-start ${
+                            index < events.length - 1 ? 'border-b border-black/50' : ''
+                          }`}
+                        >
+                          <div className="flex w-16 md:w-[75px] lg:w-[75px] p-3 md:p-5 lg:p-5 flex-col gap-2 md:gap-[10px] justify-center items-center flex-shrink-0 border-r border-black/50">
+                            <span className="flex w-[35px] h-[60px] justify-start items-start self-stretch flex-shrink-0 text-xs md:text-sm lg:text-base font-normal leading-tight lg:leading-[19.504px] text-[#206fa0] text-left">
+                              {event.date}
+                              <br />
+                              {event.month}
+                              <br />
+                              {event.year}
+                            </span>
+                          </div>
+                          <div className="flex min-w-0 flex-1 lg:flex-grow p-3 md:p-5 lg:p-5 gap-[10px] justify-center items-center">
+                            <span className="flex w-full lg:w-[365px] justify-start items-start text-sm md:text-base lg:text-xl font-medium leading-snug lg:leading-[24.38px] text-black">
+                              {renderTextWithLinks(displayText)}
+                              {isLongText && (
+                                <span className="text-[#206fa0] cursor-pointer hover:underline ml-1" onClick={() => toggleEvent(index)}>
+                                  {isExpanded ? ' ...tutup' : ' ...selengkapnya'}
+                                </span>
+                              )}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex min-w-0 flex-1 lg:flex-grow p-3 md:p-5 lg:p-5 gap-[10px] justify-center items-center">
-                          <span className="flex w-full lg:w-[365px] justify-start items-start text-sm md:text-base lg:text-xl font-medium leading-snug lg:leading-[24.38px] text-black">
-                            {event.title}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <p className="text-gray-500 text-sm p-5">Tidak ada acara & kegiatan</p>

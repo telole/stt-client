@@ -98,6 +98,42 @@ export default function News() {
       : "/default.jpg";
   };
 
+  const renderTextWithLinks = (text: string): React.ReactNode[] => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match;
+    let key = 0;
+
+    while ((match = urlRegex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      
+      const url = match[0];
+      parts.push(
+        <a
+          key={key++}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {url}
+        </a>
+      );
+      
+      lastIndex = match.index + match[0].length;
+    }
+    
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    
+    return parts.length > 0 ? parts : [text];
+  };
+
   return (
     <>
       <Navbar />
@@ -108,7 +144,6 @@ export default function News() {
         </div>
       )}
 
-      {/* Banner Section */}
       <div className="relative w-full h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat brightness-50"
@@ -124,7 +159,6 @@ export default function News() {
         </div>
       </div>
 
-      {/* News Content Section */}
       <div className="min-h-screen bg-white py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
         <div className="max-w-7xl mx-auto">
           {beritaList.length > 0 ? (
@@ -137,7 +171,6 @@ export default function News() {
                   data-aos="fade-up"
                   data-aos-delay={index * 100}
                 >
-                  {/* Image */}
                   <div className="h-[180px] sm:h-[200px] w-full bg-gray-200 overflow-hidden">
                     <img
                       src={getImageUrl(berita)}
@@ -146,13 +179,12 @@ export default function News() {
                     />
                   </div>
                   
-                  {/* Content */}
                   <div className="p-4 sm:p-5 flex flex-col gap-3 sm:gap-4 flex-1">
                     <span className="text-sm sm:text-base font-normal leading-[19.504px] text-[#206fa0]">
                       {formatDate(berita.publishedAt)}
                     </span>
                     <h3 className="text-base sm:text-lg md:text-xl font-medium leading-tight sm:leading-[24.38px] text-black line-clamp-3 flex-1">
-                      {berita.Title}
+                      {renderTextWithLinks(berita.Title)}
                     </h3>
                   </div>
                 </div>

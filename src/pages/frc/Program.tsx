@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { api } from "../../config/hooks";
 
 interface ProgramProps {
@@ -37,20 +38,33 @@ function Program({ setLoading }: ProgramProps) {
       style={{ background: "#013D7B" }}
     >
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12 md:mb-16">
+        <motion.div 
+          className="text-center mb-12 md:mb-16"
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6 }}
+        >
           <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
             Program Kelas STT Pati
           </h2>
           <div className="w-24 h-1 bg-yellow-400 mx-auto rounded-full"></div>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 md:gap-16 max-w-6xl mx-auto">
-          {programs.map((program) => {
+          {programs.map((program, index) => {
             const { id, Name, Description, Icon } = program;
             const iconClass = Icon || getFallbackIcon(Name);
 
             return (
-              <div className="text-center" key={id}>
+              <motion.div 
+                className="text-center" 
+                key={id}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
                 <div className="mb-6">
                   <i
                     className={`bi ${iconClass} text-yellow-400 text-4xl md:text-5xl`}
@@ -62,7 +76,7 @@ function Program({ setLoading }: ProgramProps) {
                 <p className="text-gray-300 text-sm whitespace-pre-line">
                   {Description}
                 </p>
-              </div>
+              </motion.div>
             );
           })}
         </div>

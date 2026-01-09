@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { api, getImageBaseURL } from "../../config/hooks";
 
 
@@ -91,29 +92,54 @@ function Header({ setLoading }: HeaderProps) {
       />
     ))}
     <div className="absolute inset-0 flex flex-col items-start justify-center px-4 sm:px-10 md:px-20 text-white z-10 ml-4 sm:ml-8 md:ml-16">
-      <h1 className="font-['Poppins'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 leading-tight max-w-3xl animate__animated animate__fadeInUp">
+      <motion.h1 
+        className="font-['Poppins'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 leading-tight max-w-3xl"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         {hero.Headline}
-      </h1>
-      <h2 className="font-['Poppins'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-4 leading-tight max-w-3xl animate__animated animate__fadeInUp animate-delay-1s">
+      </motion.h1>
+      <motion.h2 
+        className="font-['Poppins'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-4 leading-tight max-w-3xl"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+      >
         {hero.Headline2}
-      </h2>
-      <p className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-6xl mb-4 sm:mb-6 max-w-2xl leading-relaxed animate__animated animate__fadeInUp animate_delay-1s italic" style={{ fontFamily: "'Brush Script MT', 'Brush Script', cursive" }}>
+      </motion.h2>
+      <motion.p 
+        className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-6xl mb-4 sm:mb-6 max-w-2xl leading-relaxed italic" 
+        style={{ fontFamily: "'Brush Script MT', 'Brush Script', cursive" }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+      >
         {hero.Subheadline}
-      </p>
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 animate__animated animate__zoomIn animate__delay-1s">
-        <button
+      </motion.p>
+      <motion.div 
+        className="flex flex-col sm:flex-row gap-3 sm:gap-4"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
+      >
+        <motion.button
           onClick={() => HandleRedirect("https://pmb.sttp.ac.id/")}
           className="font-['Poppins'] bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2.5 sm:py-3 px-5 sm:px-6 md:px-8 rounded transition-all text-sm sm:text-base md:text-lg"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           Daftar Sekarang
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={() => window.open('https://wa.me/628971329888', '_blank')}
           className="font-['Poppins'] bg-[#0b466a] hover:bg-[#093a56] text-white font-bold py-2.5 sm:py-3 px-5 sm:px-6 md:px-8 rounded transition-all text-sm sm:text-base md:text-lg"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           Hubungi Via WhatsApp
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
     </div>
   </div>
 );

@@ -4,6 +4,7 @@ import { api, getImageBaseURL } from "../config/hooks";
 import Navbar from "./composable/Navbar";
 import Footer from "./composable/Footer";
 import LoadingSpinner from "../setLoading/SetLoading";
+import AOS from 'aos';
 
 interface Author {
   name: string;
@@ -72,6 +73,12 @@ export default function News() {
     return () => clearTimeout(timeout);
   }, [isLoading]);
 
+  useEffect(() => {
+    if (!isLoading) {
+      AOS.refresh();
+    }
+  }, [isLoading]);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const months = [
@@ -110,10 +117,10 @@ export default function News() {
           }}
         />
         <div className="relative z-10 text-center px-4">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4" data-aos="fade-down">
             Berita Terkini
           </h1>
-          <div className="w-24 sm:w-32 md:w-52 h-1.5 sm:h-2 bg-[#f0cd02] mx-auto"></div>
+          <div className="w-24 sm:w-32 md:w-52 h-1.5 sm:h-2 bg-[#f0cd02] mx-auto" data-aos="fade-up" data-aos-delay="100"></div>
         </div>
       </div>
 
@@ -122,11 +129,13 @@ export default function News() {
         <div className="max-w-7xl mx-auto">
           {beritaList.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-              {beritaList.map((berita) => (
+              {beritaList.map((berita, index) => (
                 <div
                   key={berita.id}
                   onClick={() => navigate(`/berita/${berita.slug}`)}
                   className="bg-[#e4f6ff] rounded-[10px] overflow-hidden shadow-[5px_7px_19px_0_rgba(0,0,0,0.03)] cursor-pointer hover:shadow-[5px_7px_19px_0_rgba(0,0,0,0.1)] transition-all duration-300 transform hover:scale-[1.02] sm:hover:scale-105 flex flex-col"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
                 >
                   {/* Image */}
                   <div className="h-[180px] sm:h-[200px] w-full bg-gray-200 overflow-hidden">

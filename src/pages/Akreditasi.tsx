@@ -4,6 +4,7 @@ import { api, getImageBaseURL } from '../config/hooks';
 import Navbar from './composable/Navbar';
 import Footer from './composable/Footer';
 import LoadingSpinner from '../setLoading/SetLoading';
+import AOS from 'aos';
 
 interface AkreditasiData {
   id: number;
@@ -82,6 +83,12 @@ export default function Akreditasi() {
     return () => clearTimeout(timeout);
   }, [isLoading]);
 
+  useEffect(() => {
+    if (!isLoading) {
+      AOS.refresh();
+    }
+  }, [isLoading]);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const months = [
@@ -143,10 +150,10 @@ export default function Akreditasi() {
              }}>
         </div>
         <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-5">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-5" data-aos="fade-down">
            AKREDITASI
           </h1>
-          <div className="w-52 h-2 bg-[#f0cd02] mx-auto"></div>
+          <div className="w-52 h-2 bg-[#f0cd02] mx-auto" data-aos="fade-up" data-aos-delay="100"></div>
         </div>
       </div>
 
@@ -172,7 +179,7 @@ export default function Akreditasi() {
             <span>Kembali</span>
           </button>
 
-          <div className="mb-8">
+          <div className="mb-8" data-aos="fade-up">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-2">
               {akreditasi.Title}
             </h2>
@@ -183,7 +190,7 @@ export default function Akreditasi() {
 
           <div className="flex flex-col md:flex-row gap-8 mb-12">                       
             {getImageUrl() && (
-              <div className="w-full md:w-[500px] h-[333px] flex-shrink-0">
+              <div className="w-full md:w-[500px] h-[333px] flex-shrink-0" data-aos="fade-right">
                 <img
                   src={getImageUrl()}
                   alt={akreditasi.Title}
@@ -192,14 +199,14 @@ export default function Akreditasi() {
               </div>
             )}
             
-            <div className="flex-1">
+            <div className="flex-1" data-aos="fade-left">
               <div className="text-base md:text-lg leading-relaxed text-black whitespace-pre-line">
                 {formatText(akreditasi.Deskripsi)}
               </div>
             </div>
           </div>
           {akreditasi.SubTitle && (
-            <div className="mb-6">
+            <div className="mb-6" data-aos="fade-up">
               <h3 className="text-xl md:text-2xl font-bold text-black mb-4">
                 {akreditasi.SubTitle}
               </h3>

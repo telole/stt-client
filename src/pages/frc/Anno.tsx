@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../config/hooks';
 
 interface AnnouncementData {
@@ -32,6 +34,7 @@ interface Event {
 }
 
 const Anno = () => {
+  const navigate = useNavigate();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
 
@@ -95,7 +98,13 @@ const Anno = () => {
 
   return (
     <div className="flex flex-col lg:flex-row w-full min-h-[750px] py-8 md:py-12 lg:py-[68px] px-4 md:px-8 lg:px-[410px] gap-8 md:gap-12 lg:gap-[100px] justify-center items-center bg-[#f0cd02] relative mx-auto">
-      <div className="flex w-full lg:w-[580px] min-h-0 p-6 md:p-8 lg:p-[50px] flex-col justify-between gap-6 md:gap-8 lg:gap-[30px] items-start bg-white rounded-[20px] relative shadow-[6px_24px_54px_0_rgba(0,0,0,0.05)]">
+      <motion.div 
+        className="flex w-full lg:w-[580px] min-h-0 p-6 md:p-8 lg:p-[50px] flex-col justify-between gap-6 md:gap-8 lg:gap-[30px] items-start bg-white rounded-[20px] relative shadow-[6px_24px_54px_0_rgba(0,0,0,0.05)]"
+        initial={{ opacity: 0, x: -50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="flex w-full lg:w-[271px] flex-col gap-4 md:gap-5 items-start relative">
           <h2 className="text-2xl md:text-3xl lg:text-[36px] font-bold leading-tight lg:leading-[43.884px] text-black">
             Pengumuman
@@ -125,14 +134,25 @@ const Anno = () => {
           )}
         </div>
 
-        <div className="flex w-full lg:w-[278px] px-4 md:px-5 py-3 md:py-[15px] justify-center items-center bg-[#013d7b] rounded-[10px] cursor-pointer hover:opacity-90 transition-opacity">
+        <motion.div 
+          className="flex w-full lg:w-[278px] px-4 md:px-5 py-3 md:py-[15px] justify-center items-center bg-[#013d7b] rounded-[10px] cursor-pointer hover:opacity-90 transition-opacity"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => navigate('/pengumuman-jadwal-kegiatan')}
+        >
           <span className="text-sm md:text-base font-bold leading-[19.504px] text-white whitespace-nowrap">
             Lihat Pengumuman Lainnya
           </span>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      <div className="flex w-full lg:w-[580px] min-h-0 p-6 md:p-8 lg:p-[50px] flex-col justify-between gap-6 md:gap-8 lg:gap-[30px] items-start bg-white rounded-[20px] relative shadow-[6px_24px_54px_0_rgba(0,0,0,0.05)]">
+      <motion.div 
+        className="flex w-full lg:w-[580px] min-h-0 p-6 md:p-8 lg:p-[50px] flex-col justify-between gap-6 md:gap-8 lg:gap-[30px] items-start bg-white rounded-[20px] relative shadow-[6px_24px_54px_0_rgba(0,0,0,0.05)]"
+        initial={{ opacity: 0, x: 50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="flex w-full lg:w-[323px] flex-col gap-4 md:gap-5 items-start relative">
           <h2 className="text-2xl md:text-3xl lg:text-[36px] font-bold leading-tight lg:leading-[43.884px] text-black">
             Acara & Kegiatan
@@ -172,12 +192,17 @@ const Anno = () => {
           )}
         </div>
 
-        <div className="flex w-full lg:w-[232px] px-4 md:px-5 py-3 md:py-[15px] justify-center items-center bg-[#013d7b] rounded-[10px] cursor-pointer hover:opacity-90 transition-opacity">
+        <motion.div 
+          className="flex w-full lg:w-[232px] px-4 md:px-5 py-3 md:py-[15px] justify-center items-center bg-[#013d7b] rounded-[10px] cursor-pointer hover:opacity-90 transition-opacity"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => navigate('/pengumuman-jadwal-kegiatan')}
+        >
           <span className="text-sm md:text-base font-bold leading-[19.504px] text-white whitespace-nowrap">
             Lihat Kegiatan Lainnya
           </span>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

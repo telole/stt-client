@@ -4,6 +4,7 @@ import Navbar from './composable/Navbar';
 import { X } from 'lucide-react';
 import Footer from './composable/Footer';
 import LoadingSpinner from '../setLoading/SetLoading';
+import AOS from 'aos';
 
 interface FotoData {
   id: number;
@@ -85,6 +86,12 @@ const Dosen = () => {
     return () => clearTimeout(timeout);
   }, [isLoading]);
 
+  useEffect(() => {
+    if (!isLoading) {
+      AOS.refresh();
+    }
+  }, [isLoading]);
+
   return (
     <div className="min-h-screen bg-[#e4f6ff]">
       <Navbar />
@@ -102,10 +109,10 @@ const Dosen = () => {
              }}>
         </div>
         <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-5">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-5" data-aos="fade-down">
             Daftar Dosen
           </h1>
-          <div className="w-52 h-2 bg-[#f0cd02] mx-auto"></div>
+          <div className="w-52 h-2 bg-[#f0cd02] mx-auto" data-aos="fade-up" data-aos-delay="100"></div>
         </div>
       </div>
 
@@ -113,7 +120,7 @@ const Dosen = () => {
         <div className="max-w-7xl mx-auto">
           {dosenList.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-              {dosenList.map((dosen) => (
+              {dosenList.map((dosen, index) => (
                 <div
                   key={dosen.id}
                   onClick={() => {
@@ -121,6 +128,8 @@ const Dosen = () => {
                     setIsModalOpen(true);
                   }}
                   className="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 flex flex-col items-center text-center"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
                 >
                   {dosen.Foto?.url ? (
                     <img

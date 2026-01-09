@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { api } from "../../config/hooks";
 
 interface VisiItem {
@@ -64,13 +65,25 @@ function Profile({ setLoading }: ProfileProps) {
   return (
     <section id="profile" className="bg-gray-900 py-12 md:py-20 px-4 md:px-20">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12 md:mb-16">
+        <motion.div 
+          className="text-center mb-12 md:mb-16"
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6 }}
+        >
           <h2 className="text-white text-2xl md:text-3xl lg:text-4xl font-bold mb-4">Profil</h2>
           <div className="w-24 h-1 bg-yellow-400 mx-auto rounded-full"></div>
-        </div>
+        </motion.div>
 
         <div className="flex flex-col lg:flex-row items-start justify-between gap-8 md:gap-12">
-          <div className="w-full lg:w-1/2">
+          <motion.div 
+            className="w-full lg:w-1/2"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
             <div className="mb-8 md:mb-12">
               <h3 className="text-yellow-400 text-lg md:text-xl lg:text-2xl font-bold mb-4">Visi</h3>
               <p className="text-white text-sm md:text-base leading-relaxed">
@@ -82,20 +95,33 @@ function Profile({ setLoading }: ProfileProps) {
               <h3 className="text-yellow-400 text-lg md:text-xl lg:text-2xl font-bold mb-4 md:mb-6">Misi</h3>
               <div className="space-y-3 md:space-y-4">
                 {profile?.Misi?.map((misi, index) => (
-                  <div className="flex items-start gap-3" key={misi.id}>
+                  <motion.div 
+                    className="flex items-start gap-3" 
+                    key={misi.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
                     <span className="text-yellow-400 font-bold text-sm md:text-base mt-1 flex-shrink-0">
                       {index + 1}.
                     </span>
                     <p className="text-white text-sm md:text-base leading-relaxed">
                       {misi.Text.replace(/^\d+\.\s*/, "")}
                     </p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
+          <motion.div 
+            className="w-full lg:w-1/2 flex justify-center lg:justify-end"
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
             <div className="relative w-full max-w-md aspect-video">
               {embedUrl ? (
                 <iframe
@@ -111,7 +137,7 @@ function Profile({ setLoading }: ProfileProps) {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

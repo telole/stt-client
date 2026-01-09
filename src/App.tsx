@@ -1,5 +1,8 @@
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useEffect } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import LandingPage from './pages/LandingPage';
 import "animate.css";
 import './index.css';
@@ -13,6 +16,16 @@ import AnnoucementSchedule from './pages/AnnoucementSchedule';
 import Fallback from './pages/Fallback';
 
 function App() {
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: true,
+      mirror: false,
+      offset: 100,
+    });
+  }, []);
+
   return (
     <BrowserRouter>
     <Routes>

@@ -4,6 +4,7 @@ import { api, getImageBaseURL } from '../config/hooks';
 import Navbar from './composable/Navbar';
 import Footer from './composable/Footer';
 import LoadingSpinner from '../setLoading/SetLoading';
+import AOS from 'aos';
 
 interface Author {
   name: string;
@@ -97,6 +98,12 @@ const NewsDetail = () => {
 
     return () => clearTimeout(timeout);
   }, [isLoading]);
+
+  useEffect(() => {
+    if (!isLoading && berita) {
+      AOS.refresh();
+    }
+  }, [isLoading, berita]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -216,7 +223,7 @@ const NewsDetail = () => {
             </div>
             
           {/* Article Header */}
-          <div className="mb-4 sm:mb-6">
+          <div className="mb-4 sm:mb-6" data-aos="fade-up">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-2 sm:mb-3 leading-tight">
               {berita.Title}
             </h1>
@@ -227,7 +234,7 @@ const NewsDetail = () => {
 
           {/* Article Image */}
           {getImageUrl(berita) && (
-            <div className="mb-6 sm:mb-8">
+            <div className="mb-6 sm:mb-8" data-aos="fade-up" data-aos-delay="100">
               <img
                 src={getImageUrl(berita)}
                 alt={berita.Title}
@@ -239,7 +246,7 @@ const NewsDetail = () => {
 
           {/* Article Content */}
           {berita.Content && berita.Content.length > 0 && (
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="200">
               <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
                 {renderContent(berita.Content)}
               </div>

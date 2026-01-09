@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import Navbar from './composable/Navbar';
+import AOS from 'aos';
 
 export default function Fallback() {
     const navigate = useNavigate();
@@ -8,6 +8,7 @@ export default function Fallback() {
 
     useEffect(() => {
         setIsAnimating(true);
+        AOS.refresh();
     }, []);
 
     const handleBackToHome = () => {
@@ -60,7 +61,7 @@ export default function Fallback() {
 
                     <div className={`flex flex-col gap-5 justify-center items-center flex-shrink-0 flex-wrap-nowrap relative z-40 max-w-[672px] w-full mt-8 transition-all duration-1000 delay-300 ${
                         isAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                    }`}>
+                    }`} data-aos="fade-up" data-aos-delay="300">
                         <span 
                             className="flex w-full justify-center items-start flex-shrink-0 text-4xl md:text-5xl lg:text-6xl font-bold text-[#013d7b] text-center whitespace-nowrap animate-bounce-subtle"
                             style={{ fontFamily: 'Poppins, sans-serif' }}
@@ -70,6 +71,7 @@ export default function Fallback() {
                         <button
                             onClick={handleBackToHome}
                             className="flex w-[209px] px-5 py-[15px] gap-2.5 justify-center items-center flex-shrink-0 bg-[#013d7b] rounded-[10px] cursor-pointer hover:bg-[#012a5a] transition-all duration-300 transform hover:scale-110 hover:shadow-lg animate-bounce-button"
+                            data-aos="zoom-in" data-aos-delay="500"
                         >
                             <span 
                                 className="h-5 flex-shrink-0 text-base font-bold text-white whitespace-nowrap"

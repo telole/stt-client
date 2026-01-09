@@ -57,7 +57,6 @@ return (
     <Anno  />
     <Profile  setLoading={handleLoading} />
     <KerjaSama setLoading={handleLoading} />
-    <Maps setLoading={handleLoading} />
     <Footer />
     {isLoading && (
       <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">

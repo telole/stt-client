@@ -14,6 +14,7 @@ import Profile from './frc/Profile';
 import Footer from './composable/Footer';
 import KerjaSama from './frc/KerjaSama';
 import Maps from './frc/Maps';
+import FloatingWhatsApp from './frc/FloatingWhatsapp';
 
 const LandingPage = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -58,6 +59,7 @@ return (
     <Profile  setLoading={handleLoading} />
     <KerjaSama setLoading={handleLoading} />
     <Footer />
+    <FloatingWhatsApp />
     {isLoading && (
       <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
         <LoadingSpinner />

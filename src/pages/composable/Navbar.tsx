@@ -140,12 +140,12 @@
                       >
                         Visi Misi
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => navigate('/ulasan-singkat')}
                         className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                       >
                         Ulasan Singkat
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 ) : item.label !== "Akademik" && item.label !== "Prodi" ? (
@@ -224,18 +224,18 @@
                                 >
                                   Manajemen
                                 </button>
-                                <button
+                                {/* <button
                                   onClick={() => navigate('/caldik')}
                                   className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                                 >
                                   Caldik
-                                </button>
-                                <button
+                                </button> */}
+                                {/* <button
                                   onClick={() => navigate('/baak')}
                                   className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                                 >
                                   BAAK
-                                </button>
+                                </button> */}
                               </div>
                             )}
                           </div>
@@ -263,7 +263,7 @@
                           >
                             Kurikulum
                           </button>
-                          <button
+                          {/* <button
                             onClick={() => navigate('/krs')}
                             className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                           >
@@ -274,8 +274,8 @@
                             className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                           >
                             KHS
-                          </button>
-                          <button
+                          </button> */}
+                          {/* <button
                             onClick={() => navigate('/jadwal-matkul')}
                             className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                           >
@@ -286,7 +286,7 @@
                             className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
                           >
                             Kalender Akademik
-                          </button>
+                          </button> */}
                         </div>
                       </div>
                     </div>

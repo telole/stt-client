@@ -1,67 +1,114 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import { api, getImageBaseURL } from "../../config/hooks";
 
 interface KerjaSamaProps {
   setLoading?: (value: boolean) => void;
 }
 
+interface PartnerLogo {
+  id: number;
+  src: string;
+  alt: string;
+  name: string;
+}
+
 function KerjaSama({ setLoading }: KerjaSamaProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  const isInView = useInView(sectionRef, { once: false, margin: "-100px" });
   const [scrollX, setScrollX] = useState(0);
   const animationRef = useRef<number>(0);
-
-  const logos = [
-    { id: 1, src: "/sttp.png", alt: "STTP Logo", name: "STT Pati" },
-    { id: 2, src: "/sttp.png", alt: "STTP Logo", name: "SMKTH Pati" },
-    { id: 3, src: "/sttp.png", alt: "STTP Logo", name: "STIE" },
-    { id: 4, src: "/sttp.png", alt: "STTP Logo", name: "PO. Sumber Harapan" },
-    { id: 5, src: "/sttp.png", alt: "STTP Logo", name: "Mekanisasi Pertanian Pati" },
-    { id: 6, src: "/sttp.png", alt: "STTP Logo", name: "BPR Asabahana Pati" },
-  ];
-
-  const duplicatedLogos = [...logos, ...logos, ...logos]; 
+  const [logos, setLogos] = useState<PartnerLogo[]>([]);
+  const animationFrameRef = useRef<number | null>(null);
+  const axios = api();
 
   useEffect(() => {
-    if (containerRef.current && isInView) {
-      const timer = setTimeout(() => {
-        if (containerRef.current) {
-          const containerWidth = containerRef.current.offsetWidth;
-          const startPosition = containerWidth;
-          animationRef.current = startPosition;
-          setScrollX(startPosition);
-        }
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [isInView]);
+    const fetchPartners = async () => {
+      try {
+        setLoading?.(true);
+        const res = await axios.get("partners?populate=*");
+        const partners = res.data?.data || [];
+        
+        const imageBaseURL = getImageBaseURL();
+        const partnerLogos: PartnerLogo[] = partners.map((partner: any) => {
+          const logoUrl = partner.Logo?.formats?.thumbnail?.url 
+            ? `${imageBaseURL}${partner.Logo.formats.thumbnail.url}`
+            : partner.Logo?.url 
+            ? `${imageBaseURL}${partner.Logo.url}`
+            : "/sttp.png";
+          
+          return {
+            id: partner.id,
+            src: logoUrl,
+            alt: partner.Logo?.alternativeText || partner.Name || "Partner Logo",
+            name: partner.Name || "Partner",
+          };
+        });
+        
+        setLogos(partnerLogos);
+      } catch (error) {
+        console.error("Error fetching partners:", error);
+        setLogos([
+          { id: 1, src: "/sttp.png", alt: "STTP Logo", name: "STT Pati" },
+        ]);
+      } finally {
+        setLoading?.(false);
+      }
+    };
+
+    fetchPartners();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const duplicatedLogos = logos.length > 0 ? [...logos, ...logos, ...logos, ...logos] : []; 
 
   useEffect(() => {
-    if (!isInView || !containerRef.current) return;
+    if (logos.length === 0) return;
 
     const getCardWidth = () => {
-      return window.innerWidth >= 768 ? 250 + 24 : 200 + 24; 
+      const cardWidth = window.innerWidth >= 768 ? 250 : 200;
+      const gap = window.innerWidth >= 768 ? 16 : 12;
+      return cardWidth + gap;
     };
 
-    const containerWidth = containerRef.current.offsetWidth;
-    const startPosition = containerWidth;
-    const actualCardWidth = getCardWidth();
-    const actualTotalWidth = logos.length * actualCardWidth;
-    const endPosition = startPosition + actualTotalWidth + containerWidth;
+    let isAnimating = true;
+    
+    // Start from 0 - logos will move from right to left continuously
+    animationRef.current = 0;
+    setScrollX(0);
 
     const animate = () => {
+      if (!isAnimating) return;
+
+      const cardWidth = getCardWidth();
+      const setWidth = logos.length * cardWidth;
+      
+      // Move from right to left (increasing scrollX moves content to left)
       animationRef.current += 0.5;
-      if (animationRef.current >= endPosition) {
-        animationRef.current = startPosition;   
-      }
+      
+      // Use modulo to create seamless infinite loop
+      // When we reach the end of one set, modulo brings us back seamlessly
+      // Since we have duplicated logos, this creates perfect infinite scroll
+      animationRef.current = animationRef.current % setWidth;
+      
       setScrollX(animationRef.current);
-      requestAnimationFrame(animate);
+      animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    const animationId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationId);
-  }, [isInView, logos.length]);
+    // Start animation immediately without delay
+    // Use requestAnimationFrame to ensure smooth start on next frame
+    animationFrameRef.current = requestAnimationFrame(() => {
+      animationFrameRef.current = requestAnimationFrame(animate);
+    });
+
+    return () => {
+      isAnimating = false;
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [logos.length]);
 
   return (
     <section
@@ -82,37 +129,44 @@ function KerjaSama({ setLoading }: KerjaSamaProps) {
         </motion.div>
 
         <div ref={containerRef} className="relative overflow-hidden">
-          <motion.div
-            className="flex gap-6 md:gap-8"
-            animate={{
-              x: `-${scrollX}px`,
-            }}
-            transition={{
-              ease: "linear",
-              duration: 0,
-            }}
-            style={{
-              width: "max-content",
-            }}
-          >
-            {duplicatedLogos.map((logo, index) => (
-              <div
-                key={`${logo.id}-${index}`}
-                className="flex-shrink-0 w-[200px] md:w-[250px]"
-              >
-                <div className="bg-white p-6 md:p-8 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center min-h-[180px] md:min-h-[220px] pentagon-shape">
-                  <img
-                    src={logo.src}
-                    alt={logo.alt}
-                    className="max-w-full max-h-24 md:max-h-32 object-contain mb-4"
-                  />
-                  <p className="text-black text-sm md:text-base font-medium text-center mt-2">
-                    {logo.name}
-                  </p>
+          {logos.length > 0 ? (
+            <div
+              className="flex gap-3 md:gap-4"
+              style={{
+                transform: `translateX(-${scrollX}px)`,
+                width: "max-content",
+                willChange: "transform",
+              }}
+            >
+              {duplicatedLogos.map((logo, index) => (
+                <div
+                  key={`${logo.id}-${index}`}
+                  className="flex-shrink-0 w-[200px] md:w-[250px]"
+                >
+                  <div className="bg-white p-6 md:p-8 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center min-h-[180px] md:min-h-[220px] pentagon-shape">
+                    <img
+                      src={logo.src}
+                      alt={logo.alt}
+                      className="max-w-full max-h-24 md:max-h-32 object-contain mb-4"
+                      loading="lazy"
+                    />
+                    <p className="text-black text-sm md:text-base font-medium text-center mt-2">
+                      {logo.name}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex gap-3 md:gap-4 justify-center">
+              <div className="flex-shrink-0 w-[200px] md:w-[250px]">
+                <div className="bg-gray-100 p-6 md:p-8 shadow-md flex flex-col items-center justify-center min-h-[180px] md:min-h-[220px] pentagon-shape animate-pulse">
+                  <div className="w-24 h-24 bg-gray-300 rounded mb-4"></div>
+                  <div className="h-4 w-32 bg-gray-300 rounded"></div>
                 </div>
               </div>
-            ))}
-          </motion.div>
+            </div>
+          )}
         </div>
       </div>
 

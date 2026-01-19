@@ -205,7 +205,7 @@ const Dosen = () => {
                     </p>
                   )}
                   {selectedDosen.deskripsi_dosen?.About && (
-                    <p className="text-sm text-gray-800 leading-relaxed">
+                    <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
                       {selectedDosen.deskripsi_dosen.About}
                     </p>
                   )}

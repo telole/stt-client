@@ -14,6 +14,7 @@ import Curriculums from './pages/Curriculums';
 import Akreditasi from './pages/Akreditasi';
 import AnnoucementSchedule from './pages/AnnoucementSchedule';
 import Fallback from './pages/Fallback';
+import FloatingWhatsApp from './pages/frc/FloatingWhatsapp';
 
 function App() {
   useEffect(() => {
@@ -38,6 +39,7 @@ function App() {
       <Route path='/pengumuman-jadwal-kegiatan' element={<AnnoucementSchedule/>} />
       <Route path='*' element={<Fallback/>} />
     </Routes>
+    <FloatingWhatsApp />
     </BrowserRouter>
   );
 }

@@ -4,12 +4,28 @@
   import { useNavigate } from "react-router-dom";
   import { api } from "../../config/hooks";
   import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
-
+ 
+  interface SubNavItem {
+    id: number;
+    label: string;
+    Path: string;
+    Icon: string | null;
+  }
+ 
+  interface NavChildItem {
+    id: number;
+    label: string;
+    Path: string;
+    Icon: string | null;
+    subChildren?: SubNavItem[];
+  }
+ 
   interface NavItem {
     id: number;
     label: string;
     Path: string;
     Icon: string | null;
+    children?: NavChildItem[];
   }
 
   function Navbar() {
@@ -24,15 +40,31 @@
     useEffect(() => {
       const axios = api();
       axios
-        .get("navbar?populate=header")
+        .get(
+          "navbar?populate[header][populate][NavbarChild][populate][SubNavbarChild]=*"
+        )
         .then((res) => {
           const data = res.data.data;
           if (data && data.header && Array.isArray(data.header)) {
             const headerItems: NavItem[] = data.header.map((item: any) => ({
               id: item.id,
-              label: item.label || item.Label || '',
-              Path: item.Path || item.path || '',
+              label: item.Label || item.label || "",
+              Path: item.Path || item.path || "",
               Icon: item.Icon || item.icon || null,
+              children:
+                item.NavbarChild?.map((child: any) => ({
+                  id: child.id,
+                  label: child.Label || child.label || "",
+                  Path: child.Path || child.path || "",
+                  Icon: child.Icon || child.icon || null,
+                  subChildren:
+                    child.SubNavbarChild?.map((sub: any) => ({
+                      id: sub.id,
+                      label: sub.Label || sub.label || "",
+                      Path: sub.Path || sub.path || "",
+                      Icon: sub.Icon || sub.icon || null,
+                    })) || [],
+                })) || [],
             }));
             setMenu(headerItems);
           }
@@ -90,6 +122,25 @@
         window.location.href = 'https://pmb.sttp.ac.id/';
       }
     }
+  
+    const handlePathClick = (path: string) => {
+      if (!path) return;
+      const trimmed = path.trim();
+  
+      if (trimmed.startsWith("http")) {
+        window.open(trimmed, "_blank");
+      } else if (trimmed.startsWith("/")) {
+        navigate(trimmed);
+      } else {
+        scrollToSection(trimmed);
+      }
+  
+      setIsOpen(false);
+      setIsProfilOpen(false);
+      setIsAkademikOpen(false);
+      setIsProdiOpen(false);
+      setIsProdiSubOpen(false);
+    };
 
     return (
       <nav className="bg-[#013D7B] fixed top-0 left-0 w-full z-[999] shadow-md">
@@ -107,13 +158,13 @@
 
             <div className="hidden lg:flex items-center space-x-6">
               {menu.map((item, index) =>
-                item.label === "Profil" ? (
+                item.label === "Profil" && (item.children?.length || 0) > 0 ? (
                   <div key={item.id} className="relative">
                     <button
                       onClick={toggleProfil}
                       className="text-white hover:text-yellow-300 transition-colors duration-300 flex items-center gap-1"
                     >
-                      Profil
+                      {item.label}
                       <ChevronDown
                         className={`w-4 h-4 transition-transform duration-300 ${
                           isProfilOpen ? "rotate-180" : ""
@@ -128,41 +179,32 @@
                           : "opacity-0 invisible transform scale-95 -translate-y-2"
                       }`}
                     >
-                      <button
-                        onClick={() => scrollToSection("selayang-pandang")}
-                        className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                      >
-                        Kata sambutan
-                      </button>
-                      <button
-                        onClick={() => scrollToSection("profile")}
-                        className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                      >
-                        Visi Misi
-                      </button>
-                      {/* <button
-                        onClick={() => navigate('/ulasan-singkat')}
-                        className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                      >
-                        Ulasan Singkat
-                      </button> */}
+                      {item.children?.map((child) => (
+                        <button
+                          key={child.id}
+                          onClick={() => handlePathClick(child.Path)}
+                          className="block w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                        >
+                          {child.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 ) : item.label !== "Akademik" && item.label !== "Prodi" ? (
                   <button
                     key={item.id}
-                    onClick={() => scrollToSection(item.Path)}
+                    onClick={() => handlePathClick(item.Path)}
                     className="text-white hover:text-yellow-300 transition-colors duration-300"
                   >
                     {item.label}
                   </button>
-                ) : item.label === "Akademik" ? (
+                ) : item.label === "Akademik" && (item.children?.length || 0) > 0 ? (
                   <div key={item.id} className="relative">
                     <button
                       onClick={toggleAkademik}
                       className="text-white hover:text-yellow-300 transition-colors duration-300 flex items-center gap-1"
                     >
-                      Akademik
+                      {item.label}
                       <ChevronDown
                         className={`w-4 h-4 transition-transform duration-300 ${
                           isAkademikOpen ? "rotate-180" : ""
@@ -176,122 +218,82 @@
                           ? "opacity-100 visible transform scale-100 translate-y-0"
                           : "opacity-0 invisible transform scale-95 -translate-y-2"
                       }`}
-                      onMouseEnter={() => {
-                        // Biarkan sub-menu terbuka jika sudah terbuka
-                      }}
                       onMouseLeave={() => setIsProdiSubOpen(false)}
                     >
                       <div className="relative flex">
-                        {/* Menu utama Akademik */}
-                        <div 
-                          className="flex flex-col"
-                          onMouseEnter={() => {
-                            // Jaga sub-menu tetap terbuka jika mouse masih di area menu utama
-                            // Sub-menu hanya tertutup oleh onMouseLeave dari dropdown utama
-                          }}
-                        >
-                          <div
-                            onMouseEnter={() => setIsProdiSubOpen(true)}
-                            className="relative"
-                          >
-                            <button
-                              className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200 flex items-center justify-between group"
-                            >
-                              <span>Prodi</span>
-                              <ChevronRight className="w-4 h-4" />
-                            </button>
-                            {/* Sub-menu Prodi (muncul di kanan) - dipindah ke sini agar lebih dekat dengan button Prodi */}
-                            {isProdiSubOpen && (
-                              <div
-                                className="absolute left-full top-0 ml-1 bg-white rounded shadow-lg py-2 min-w-[180px] border-l border-gray-200 z-50"
-                                onMouseEnter={() => setIsProdiSubOpen(true)}
-                              >
-                                <button
-                                  onClick={() => scrollToSection("program-studi")}
-                                  className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                                >
-                                  Informatika
-                                </button>
-                                <button
-                                  onClick={() => scrollToSection("program-studi")}
-                                  className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                                >
-                                  Elektro
-                                </button>
-                                <button
-                                  onClick={() => scrollToSection("program-studi")}
-                                  className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                                >
-                                  Manajemen
-                                </button>
-                                {/* <button
-                                  onClick={() => navigate('/caldik')}
-                                  className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                                >
-                                  Caldik
-                                </button> */}
-                                {/* <button
-                                  onClick={() => navigate('/baak')}
-                                  className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                                >
-                                  BAAK
-                                </button> */}
-                              </div>
-                            )}
-                          </div>
-                          <button
-                            onClick={() => navigate('/dosens')}
-                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                          >
-                            Dosen
-                          </button>
-                          <button
-                            onClick={() => scrollToSection("mahasiswa")}
-                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                          >
-                            Mahasiswa
-                          </button>
-                          <button
-                            onClick={() => navigate('/akreditasi')}
-                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                          >
-                            Akreditasi
-                          </button>
-                          <button
-                            onClick={() => navigate('/kurikulum')}
-                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                          >
-                            Kurikulum
-                          </button>
-                          {/* <button
-                            onClick={() => navigate('/krs')}
-                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                          >
-                            KRS
-                          </button>
-                          <button
-                            onClick={() => navigate('/khs')}
-                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                          >
-                            KHS
-                          </button> */}
-                          {/* <button
-                            onClick={() => navigate('/jadwal-matkul')}
-                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                          >
-                            Jadwal Matkul
-                          </button>
-                          <button
-                            onClick={() => navigate('/kalender-akademik')}
-                            className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
-                          >
-                            Kalender Akademik
-                          </button> */}
+                        <div className="flex flex-col">
+                          {(() => {
+                            const children = item.children || [];
+                            const prodiChild = children.find(
+                              (child) =>
+                                child.label.toLowerCase() === "prodi"
+                            );
+                            const otherChildren = children.filter(
+                              (child) =>
+                                child.label.toLowerCase() !== "prodi"
+                            );
+
+                            return (
+                              <>
+                                {prodiChild && (
+                                  <div
+                                    onMouseEnter={() => setIsProdiSubOpen(true)}
+                                    className="relative"
+                                  >
+                                    <button className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200 flex items-center justify-between group">
+                                      <span>{prodiChild.label}</span>
+                                      <ChevronRight className="w-4 h-4" />
+                                    </button>
+                                    {isProdiSubOpen && (
+                                      <div
+                                        className="absolute left-full top-0 ml-1 bg-white rounded shadow-lg py-2 min-w-[180px] border-l border-gray-200 z-50"
+                                        onMouseEnter={() =>
+                                          setIsProdiSubOpen(true)
+                                        }
+                                      >
+                                        {prodiChild.subChildren?.map(
+                                          (sub) => (
+                                            <button
+                                              key={sub.id}
+                                              onClick={() =>
+                                                handlePathClick(sub.Path)
+                                              }
+                                              className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                                            >
+                                              {sub.label}
+                                            </button>
+                                          )
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+
+                                {otherChildren.map((child) => (
+                                  <button
+                                    key={child.id}
+                                    onClick={() => handlePathClick(child.Path)}
+                                    className="w-full text-left px-4 py-2 text-blue-900 hover:bg-yellow-100 transition-colors duration-200"
+                                  >
+                                    {child.label}
+                                  </button>
+                                ))}
+                              </>
+                            );
+                          })()}
                         </div>
                       </div>
                     </div>
                   </div>
-                ) : null
+                ) : (
+                  <button
+                    key={item.id}
+                    onClick={() => handlePathClick(item.Path)}
+                    className="text-white hover:text-yellow-300 transition-colors duration-300"
+                  >
+                    {item.label}
+                  </button>
+                )
               )}
 
               <button
@@ -334,7 +336,7 @@
           >
             <div className="space-y-3 bg-[#013D7B] rounded-md p-4">
               {menu.map((item, index) =>
-                item.label === "Profil" ? (
+                item.label === "Profil" && (item.children?.length || 0) > 0 ? (
                   <div
                     key={item.id}
                     className={`transform transition-all duration-300 ${
@@ -346,7 +348,7 @@
                       onClick={toggleProfil}
                       className="w-full text-left text-white hover:text-yellow-300 flex items-center justify-between transition-colors duration-300"
                     >
-                      Profil
+                      {item.label}
                       <ChevronDown
                         className={`w-4 h-4 transition-transform duration-300 ${
                           isProfilOpen ? "rotate-180" : ""
@@ -360,31 +362,22 @@
                       }`}
                     >
                       <div className="space-y-2 ml-2">
-                        <button
-                          onClick={() => scrollToSection("selayang-pandang")}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          Kata sambutan
-                        </button>
-                        <button
-                          onClick={() => scrollToSection("profile")}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          Visi Misi
-                        </button>
-                        <button
-                          onClick={() => navigate('/ulasan-singkat')}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          Ulasan Singkat
-                        </button>
+                        {item.children?.map((child) => (
+                          <button
+                            key={child.id}
+                            onClick={() => handlePathClick(child.Path)}
+                            className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                          >
+                            {child.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
                 ) : item.label !== "Akademik" ? (
                   <button
                     key={item.id}
-                    onClick={() => scrollToSection(item.Path)}
+                    onClick={() => handlePathClick(item.Path)}
                     className={`block text-white hover:text-yellow-300 transition-all duration-300 transform ${
                       isOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
                     } w-full text-left`}
@@ -392,7 +385,7 @@
                   >
                     {item.label}
                   </button>
-                ) : (
+                ) : (item.children?.length || 0) > 0 ? (
                   <div
                     key={item.id}
                     className={`transform transition-all duration-300 ${
@@ -404,7 +397,7 @@
                       onClick={toggleAkademik}
                       className="w-full text-left text-white hover:text-yellow-300 flex items-center justify-between transition-colors duration-300"
                     >
-                      Akademik
+                      {item.label}
                       <ChevronDown
                         className={`w-4 h-4 transition-transform duration-300 ${
                           isAkademikOpen ? "rotate-180" : ""
@@ -418,107 +411,81 @@
                       }`}
                     >
                       <div className="space-y-2 ml-2">
-                        <button
-                          onClick={toggleProdi}
-                          className="w-full text-left text-white hover:text-yellow-300 flex items-center justify-between transition-colors duration-300"
-                        >
-                          Prodi
-                          <ChevronDown
-                            className={`w-3 h-3 transition-transform duration-300 ${
-                              isProdiOpen ? "rotate-180" : ""
-                            }`}
-                          />
-                        </button>
+                        {(() => {
+                          const children = item.children || [];
+                          const prodiChild = children.find(
+                            (child) => child.label.toLowerCase() === "prodi"
+                          );
+                          const otherChildren = children.filter(
+                            (child) => child.label.toLowerCase() !== "prodi"
+                          );
 
-                        <div
-                          className={`ml-4 overflow-hidden transition-all duration-300 ${
-                            isProdiOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-                          }`}
-                        >
-                          <div className="space-y-1">
-                            <button
-                              onClick={() => scrollToSection("program-studi")}
-                              className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                            >
-                              Informatika
-                            </button>
-                            <button
-                              onClick={() => scrollToSection("program-studi")}
-                              className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                            >
-                              Elektro
-                            </button>
-                            <button
-                              onClick={() => scrollToSection("program-studi")}
-                              className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                            >
-                              Manajemen
-                            </button>
-                            <button
-                              onClick={() => navigate('/caldik')}
-                              className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                            >
-                              Caldik
-                            </button>
-                            <button
-                              onClick={() => navigate('/baak')}
-                              className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                            >
-                              BAAK
-                            </button>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => navigate('/dosens')}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          Dosen
-                        </button>
-                        <button
-                          onClick={() => scrollToSection("mahasiswa")}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          Mahasiswa
-                        </button>
-                        <button
-                          onClick={() => navigate('/akreditasi')}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          Akreditasi
-                        </button>
-                        <button
-                          onClick={() => navigate('/kurikulum')}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          Kurikulum
-                        </button>
-                        <button
-                          onClick={() => navigate('/krs')}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          KRS
-                        </button>
-                        <button
-                          onClick={() => navigate('/khs')}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          KHS
-                        </button>
-                        <button
-                          onClick={() => navigate('/jadwal-matkul')}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          Jadwal Matkul
-                        </button>
-                        <button
-                          onClick={() => navigate('/kalender-akademik')}
-                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
-                        >
-                          Kalender Akademik
-                        </button>
+                          return (
+                            <>
+                              {prodiChild && (
+                                <>
+                                  <button
+                                    onClick={toggleProdi}
+                                    className="w-full text-left text-white hover:text-yellow-300 flex items-center justify-between transition-colors duration-300"
+                                  >
+                                    {prodiChild.label}
+                                    <ChevronDown
+                                      className={`w-3 h-3 transition-transform duration-300 ${
+                                        isProdiOpen ? "rotate-180" : ""
+                                      }`}
+                                    />
+                                  </button>
+
+                                  <div
+                                    className={`ml-4 overflow-hidden transition-all duration-300 ${
+                                      isProdiOpen
+                                        ? "max-h-40 opacity-100"
+                                        : "max-h-0 opacity-0"
+                                    }`}
+                                  >
+                                    <div className="space-y-1">
+                                      {prodiChild.subChildren?.map((sub) => (
+                                        <button
+                                          key={sub.id}
+                                          onClick={() =>
+                                            handlePathClick(sub.Path)
+                                          }
+                                          className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                                        >
+                                          {sub.label}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+
+                              {otherChildren.map((child) => (
+                                <button
+                                  key={child.id}
+                                  onClick={() => handlePathClick(child.Path)}
+                                  className="block w-full text-left text-white hover:text-yellow-300 transition-colors duration-300"
+                                >
+                                  {child.label}
+                                </button>
+                              ))}
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>
+                ) : (
+                  <button
+                    key={item.id}
+                    onClick={() => handlePathClick(item.Path)}
+                    className={`block text-white hover:text-yellow-300 transition-all duration-300 transform ${
+                      isOpen ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
+                    } w-full text-left`}
+                    style={{ transitionDelay: `${index * 100}ms` }}
+                  >
+                    {item.label}
+                  </button>
                 )
               )}
 

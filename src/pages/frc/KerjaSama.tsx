@@ -19,6 +19,7 @@ function KerjaSama({ setLoading }: KerjaSamaProps) {
   const isInView = useInView(sectionRef, { once: false, margin: "-100px" });
   const [scrollX, setScrollX] = useState(0);
   const animationRef = useRef<number>(0);
+  const lastTimeRef = useRef<number | null>(null);
   const [logos, setLogos] = useState<PartnerLogo[]>([]);
   const animationFrameRef = useRef<number | null>(null);
   const axios = api();
@@ -49,9 +50,7 @@ function KerjaSama({ setLoading }: KerjaSamaProps) {
         setLogos(partnerLogos);
       } catch (error) {
         console.error("Error fetching partners:", error);
-        setLogos([
-          { id: 1, src: "/sttp.png", alt: "STTP Logo", name: "STT Pati" },
-        ]);
+        setLogos([]);
       } finally {
         setLoading?.(false);
       }
@@ -61,54 +60,63 @@ function KerjaSama({ setLoading }: KerjaSamaProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const duplicatedLogos = logos.length > 0 ? [...logos, ...logos, ...logos, ...logos] : []; 
+  const duplicatedLogos =
+    logos.length > 0 ? [...logos, ...logos] : [];
 
   useEffect(() => {
-    if (logos.length === 0) return;
+    // Jangan jalanin animasi kalau belum ada logo atau section tidak kelihatan
+    if (logos.length === 0 || !isInView) {
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      return;
+    }
 
     const getCardWidth = () => {
-      const cardWidth = window.innerWidth >= 768 ? 250 : 200;
+      const cardWidth = window.innerWidth >= 768 ? 240 : 180;
       const gap = window.innerWidth >= 768 ? 16 : 12;
       return cardWidth + gap;
     };
 
     let isAnimating = true;
-    
-    // Start from 0 - logos will move from right to left continuously
-    animationRef.current = 0;
-    setScrollX(0);
+    const SPEED_PX_PER_SEC = 25; // lebih halus
 
-    const animate = () => {
+    const tick = (timestamp: number) => {
       if (!isAnimating) return;
+
+      if (lastTimeRef.current === null) {
+        lastTimeRef.current = timestamp;
+      }
+
+      const deltaMs = timestamp - lastTimeRef.current;
+      lastTimeRef.current = timestamp;
+
+      const distance = (SPEED_PX_PER_SEC * deltaMs) / 1000;
 
       const cardWidth = getCardWidth();
       const setWidth = logos.length * cardWidth;
-      
-      // Move from right to left (increasing scrollX moves content to left)
-      animationRef.current += 0.5;
-      
-      // Use modulo to create seamless infinite loop
-      // When we reach the end of one set, modulo brings us back seamlessly
-      // Since we have duplicated logos, this creates perfect infinite scroll
-      animationRef.current = animationRef.current % setWidth;
-      
+
+      animationRef.current = (animationRef.current + distance) % setWidth;
       setScrollX(animationRef.current);
-      animationFrameRef.current = requestAnimationFrame(animate);
+
+      animationFrameRef.current = requestAnimationFrame(tick);
     };
 
-    // Start animation immediately without delay
-    // Use requestAnimationFrame to ensure smooth start on next frame
-    animationFrameRef.current = requestAnimationFrame(() => {
-      animationFrameRef.current = requestAnimationFrame(animate);
-    });
+    // Reset posisi saat mulai animasi
+    animationRef.current = 0;
+    setScrollX(0);
+    lastTimeRef.current = null;
+    animationFrameRef.current = requestAnimationFrame(tick);
 
     return () => {
       isAnimating = false;
       if (animationFrameRef.current !== null) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
     };
-  }, [logos.length]);
+  }, [logos.length, isInView]);
 
   return (
     <section
@@ -128,7 +136,16 @@ function KerjaSama({ setLoading }: KerjaSamaProps) {
           <div className="w-24 h-1 bg-yellow-400 mx-auto rounded-full" />
         </motion.div>
 
-        <div ref={containerRef} className="relative overflow-hidden">
+        <div
+          ref={containerRef}
+          className="relative overflow-hidden"
+          style={{
+            maskImage:
+              "linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%)",
+          }}
+        >
           {logos.length > 0 ? (
             <div
               className="flex gap-3 md:gap-4"

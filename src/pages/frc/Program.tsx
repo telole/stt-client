@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+'use client';
+
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { api } from "../../config/hooks";
 
@@ -13,9 +15,19 @@ interface ProgramData {
   Icon: string | null; 
 }
 
+interface Particle {
+  id: number;
+  x: number;
+  y: number;
+}
+
 function Program({ setLoading }: ProgramProps) {
   const axios = api();
   const [programs, setPrograms] = useState<ProgramData[]>([]);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const sectionRef = useRef<HTMLElement>(null);
+  const particleId = useRef(0);
 
   useEffect(() => {
     setLoading(true);
@@ -26,6 +38,35 @@ function Program({ setLoading }: ProgramProps) {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        setMousePos({ x, y });
+
+        // Add new particle
+        setParticles(prev => [
+          ...prev,
+          { id: particleId.current++, x, y }
+        ]);
+
+        // Remove old particles after animation
+        setTimeout(() => {
+          setParticles(prev => prev.slice(1));
+        }, 1000);
+      }
+    };
+
+    const section = sectionRef.current;
+    if (section) {
+      section.addEventListener("mousemove", handleMouseMove);
+      return () => section.removeEventListener("mousemove", handleMouseMove);
+    }
+  }, []);
+
   const getFallbackIcon = (name: string): string => {
     if (name.toLowerCase().includes("weekend")) return "bi-house-fill";
     if (name.toLowerCase().includes("reguler")) return "bi-mortarboard-fill";
@@ -34,9 +75,37 @@ function Program({ setLoading }: ProgramProps) {
 
   return (
     <section
-      className="bg-blue-900 py-12 md:py-20 px-4 md:px-20"
+      ref={sectionRef}
+      className="relative bg-blue-900 py-12 md:py-20 px-4 md:px-20 overflow-hidden"
       style={{ background: "#013D7B" }}
     >
+      {/* Particle Trail Effect */}
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="pointer-events-none fixed"
+          initial={{ 
+            x: particle.x - 4, 
+            y: particle.y - 4,
+            scale: 1,
+            opacity: 1 
+          }}
+          animate={{ 
+            scale: 0,
+            opacity: 0,
+            y: particle.y - 30
+          }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          style={{
+            width: "8px",
+            height: "8px",
+            background: "linear-gradient(135deg, #FFC107, #FF9800)",
+            borderRadius: "50%",
+            boxShadow: "0 0 20px rgba(255, 193, 7, 0.8)",
+          }}
+        />
+      ))}
+
       <div className="max-w-6xl mx-auto">
         <motion.div 
           className="text-center mb-12 md:mb-16"

@@ -74,7 +74,7 @@ const Dosen = () => {
         console.error('Error fetching dosen:', err);
         handleLoading(false);
       });
-  }, [handleLoading]);
+  }, []);
 
   useEffect(() => {
     const timeout = setTimeout(() => {

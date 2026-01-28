@@ -46,7 +46,7 @@ function Flow({ setLoading }: FlowProps) {
       .then((res) => {
         const data = res.data?.data || [];
         setLinks(data);
-        console.log("LINKS:", data);
+        // console.log("LINKS:", data);
       })
       .catch((err) => console.error("Fetch links error:", err));
   }, []);

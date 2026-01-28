@@ -41,15 +41,14 @@ function Flow({ setLoading }: FlowProps) {
       .catch((err) => console.error("Fetch error:", err))
       .finally(() => setLoading(false));
 
-    // Fetch links
     axiosInstance
-      .get("links")
+      .get("downloads?populate=*")
       .then((res) => {
         const data = res.data?.data || [];
         setLinks(data);
+        console.log("LINKS:", data);
       })
       .catch((err) => console.error("Fetch links error:", err));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function HandleRedirect(path: string) { 
